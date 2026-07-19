@@ -1,7 +1,3 @@
-/* USER-PROVIDED TYPESCALE — use verbatim in src/styles/typography.css,
-   EXCEPT: remove the Google Fonts @import line (fonts are self-hosted via
-   @fontsource/poppins and @fontsource/merriweather imported in global.css). */
-
 :root {
   --typescale-ratio: 1.2; /* ratio this static scale was generated against */
   --typo-body-family: "Poppins", system-ui, sans-serif;
@@ -9,6 +5,7 @@
   --typo-body-weight-default: 400;
   --typo-heading-weight-default: 600;
   --typo-line-height: 1.5;
+  --typo-heading-line-height: 1.25;
   --typo-letter-spacing: 0;
   --typo-size-xs: clamp(0.607rem, 0.558rem + 0.25vw, 0.781rem);
   --typo-size-small: clamp(0.729rem, 0.669rem + 0.3vw, 0.937rem);
@@ -19,76 +16,66 @@
   --typo-size-xl: clamp(1.815rem, 1.667rem + 0.74vw, 2.333rem);
   --typo-size-xxl: clamp(2.177rem, 1.999rem + 0.89vw, 2.799rem);
   --typo-size-display: clamp(2.613rem, 2.399rem + 1.07vw, 3.359rem);
+
+  /* Composed custom properties for the font shorthand:
+     font: <weight> <size> / <line-height> <family> */
+  --font-body-default: var(--typo-body-weight-default) var(--typo-size-default) /
+    var(--typo-line-height) var(--typo-body-family);
+  --font-heading-sm-md: var(--typo-heading-weight-default) var(--typo-size-sm-md) /
+    var(--typo-heading-line-height) var(--typo-heading-family);
+  --font-heading-md: var(--typo-heading-weight-default) var(--typo-size-md) /
+    var(--typo-heading-line-height) var(--typo-heading-family);
+  --font-heading-lg: var(--typo-heading-weight-default) var(--typo-size-lg) /
+    var(--typo-heading-line-height) var(--typo-heading-family);
+  --font-heading-xl: var(--typo-heading-weight-default) var(--typo-size-xl) /
+    var(--typo-heading-line-height) var(--typo-heading-family);
 }
 
 .typo-xs {
-  font-family: var(--typo-body-family);
-  font-size: var(--typo-size-xs);
-  font-weight: var(--typo-body-weight-default);
+  font: var(--typo-body-weight-default) var(--typo-size-xs) / var(--typo-line-height)
+    var(--typo-body-family);
   letter-spacing: var(--typo-letter-spacing);
-  line-height: var(--typo-line-height);
 }
 
 .typo-small {
-  font-family: var(--typo-body-family);
-  font-size: var(--typo-size-small);
-  font-weight: var(--typo-body-weight-default);
+  font: var(--typo-body-weight-default) var(--typo-size-small) / var(--typo-line-height)
+    var(--typo-body-family);
   letter-spacing: var(--typo-letter-spacing);
-  line-height: var(--typo-line-height);
 }
 
 .typo-default {
-  font-family: var(--typo-body-family);
-  font-size: var(--typo-size-default);
-  font-weight: var(--typo-body-weight-default);
+  font: var(--font-body-default);
   letter-spacing: var(--typo-letter-spacing);
-  line-height: var(--typo-line-height);
 }
 
 .typo-sm-md {
-  font-family: var(--typo-heading-family);
-  font-size: var(--typo-size-sm-md);
-  font-weight: var(--typo-heading-weight-default);
+  font: var(--font-heading-sm-md);
   letter-spacing: var(--typo-letter-spacing);
-  line-height: var(--typo-line-height);
 }
 
 .typo-md {
-  font-family: var(--typo-heading-family);
-  font-size: var(--typo-size-md);
-  font-weight: var(--typo-heading-weight-default);
+  font: var(--font-heading-md);
   letter-spacing: var(--typo-letter-spacing);
-  line-height: var(--typo-line-height);
 }
 
 .typo-lg {
-  font-family: var(--typo-heading-family);
-  font-size: var(--typo-size-lg);
-  font-weight: var(--typo-heading-weight-default);
+  font: var(--font-heading-lg);
   letter-spacing: var(--typo-letter-spacing);
-  line-height: var(--typo-line-height);
 }
 
 .typo-xl {
-  font-family: var(--typo-heading-family);
-  font-size: var(--typo-size-xl);
-  font-weight: var(--typo-heading-weight-default);
+  font: var(--font-heading-xl);
   letter-spacing: var(--typo-letter-spacing);
-  line-height: var(--typo-line-height);
 }
 
 .typo-xxl {
-  font-family: var(--typo-heading-family);
-  font-size: var(--typo-size-xxl);
-  font-weight: var(--typo-heading-weight-default);
+  font: var(--typo-heading-weight-default) var(--typo-size-xxl) / var(--typo-heading-line-height)
+    var(--typo-heading-family);
   letter-spacing: var(--typo-letter-spacing);
-  line-height: var(--typo-line-height);
 }
 
 .typo-display {
-  font-family: var(--typo-heading-family);
-  font-size: var(--typo-size-display);
-  font-weight: var(--typo-heading-weight-default);
+  font: var(--typo-heading-weight-default) var(--typo-size-display) /
+    var(--typo-heading-line-height) var(--typo-heading-family);
   letter-spacing: var(--typo-letter-spacing);
-  line-height: var(--typo-line-height);
 }

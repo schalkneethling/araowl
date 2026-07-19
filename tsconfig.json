@@ -3,7 +3,7 @@
     "target": "es2023",
     "module": "esnext",
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
-    "types": ["vite/client"],
+    "types": ["vite/client", "node"],
     "jsx": "react-jsx",
     "paths": {
       "@/*": ["./src/*"],
@@ -25,5 +25,12 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "shared", "env.d.ts"]
+  "include": [
+    "src",
+    "shared",
+    "env.d.ts",
+    "vite.config.ts",
+    "playwright.config.ts",
+    "playwright.a11y.config.ts"
+  ]
 }

@@ -1,3 +1,22 @@
+/* Single cascade-layer order for the whole app, interleaving Tailwind v4's
+   layers (theme, base, components, utilities) with ours:
+   - reset: vendored community reset — lowest priority
+   - theme: Tailwind theme variables
+   - tokens: our custom properties. Must come AFTER theme: Tailwind emits
+     --color-background/--color-border/--color-primary/--color-accent (+
+     -foreground) as var() references to the shadcn variables, which are in
+     turn mapped to our identically named tokens — if theme won, those
+     custom properties would form a var() cycle and resolve to invalid.
+   - base: element defaults (Tailwind preflight, shadcn base, our elements)
+   - typography: .typo-* classes — after base so they beat element defaults
+   - components: shadcn/Tailwind component styles
+   - layout: page-shell layout (header/main/footer, skip links)
+   - utils: our utility classes (.visually-hidden) — beat layout/components
+   - utilities: Tailwind utility classes stay last so they can override
+     anything when applied deliberately in markup */
+@layer reset, theme, tokens, base, typography, components, layout, utils, utilities;
+
+@import "./reset.css" layer(reset);
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -5,9 +24,12 @@
 @import "@fontsource/poppins/600.css";
 @import "@fontsource/merriweather/400.css";
 @import "@fontsource/merriweather/700.css";
-@import "./tokens.css";
-@import "./typography.css";
+@import "./tokens.css" layer(tokens);
+@import "./typography.css" layer(typography);
+@import "./utils.css" layer(utils);
 
+/* Kept for shadcn component utilities; our own CSS relies on
+   color-scheme + light-dark() in tokens.css, not on this variant. */
 @custom-variant dark (&:is([data-theme="dark"] *));
 
 @theme inline {
@@ -53,6 +75,9 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* shadcn semantic variables mapped to our tokens. A single block covers
+   both themes: the tokens themselves are light-dark() values that flip
+   with color-scheme, so no [data-theme="dark"] duplicate is needed. */
 :root {
   --background: var(--color-background);
   --foreground: var(--color-text-primary);
@@ -77,41 +102,7 @@
   --chart-3: var(--brand-tint);
   --chart-4: var(--brand-orange);
   --chart-5: var(--brand-dark-red);
-  --radius: 0.625rem;
-  --sidebar: var(--color-surface-sunken);
-  --sidebar-foreground: var(--color-text-primary);
-  --sidebar-primary: var(--color-primary);
-  --sidebar-primary-foreground: var(--color-primary-foreground);
-  --sidebar-accent: var(--color-accent);
-  --sidebar-accent-foreground: var(--color-accent-foreground);
-  --sidebar-border: var(--color-border);
-  --sidebar-ring: var(--color-focus-ring);
-}
-
-[data-theme="dark"] {
-  --background: var(--color-background);
-  --foreground: var(--color-text-primary);
-  --card: var(--color-surface);
-  --card-foreground: var(--color-text-primary);
-  --popover: var(--color-surface);
-  --popover-foreground: var(--color-text-primary);
-  --primary: var(--color-primary);
-  --primary-foreground: var(--color-primary-foreground);
-  --secondary: var(--color-surface-sunken);
-  --secondary-foreground: var(--color-text-primary);
-  --muted: var(--color-surface-sunken);
-  --muted-foreground: var(--color-text-muted);
-  --accent: var(--color-accent);
-  --accent-foreground: var(--color-accent-foreground);
-  --destructive: var(--color-error);
-  --border: var(--color-border);
-  --input: var(--color-border);
-  --ring: var(--color-focus-ring);
-  --chart-1: var(--brand-teal);
-  --chart-2: var(--brand-amber);
-  --chart-3: var(--brand-tint);
-  --chart-4: var(--brand-orange);
-  --chart-5: var(--brand-dark-red);
+  --radius: var(--radius-md);
   --sidebar: var(--color-surface-sunken);
   --sidebar-foreground: var(--color-text-primary);
   --sidebar-primary: var(--color-primary);
@@ -127,153 +118,175 @@
     @apply border-border outline-ring/50;
   }
 
+  /* Element defaults. Background/foreground colors come from the shadcn
+     mapping (driven by our tokens); the reset supplies box sizing, media
+     defaults, and margins — nothing here re-declares them. */
   body {
     @apply bg-background text-foreground;
+
+    font: var(--font-body-default);
   }
 
   html {
     @apply font-sans;
   }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--typo-heading-family);
+    font-weight: var(--typo-heading-weight-default);
+    line-height: var(--typo-heading-line-height);
+  }
+
+  h1 {
+    font-size: var(--typo-size-xl);
+  }
+
+  h2 {
+    font-size: var(--typo-size-lg);
+  }
+
+  h3 {
+    font-size: var(--typo-size-md);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
 }
 
-/* ========================================
- * Base element styles
- * ======================================== */
+@layer layout {
+  /* Skip links — adapted from
+     https://github.com/schalkneethling (skip-links component) */
+  .skip-links-nav {
+    --skip-links-nav-hidden-offset: -20rem;
+    --skip-links-nav-z-index: 999;
 
-body {
-  background-color: var(--color-background);
-  color: var(--color-text-primary);
-  font-family: var(--typo-body-family);
-  font-size: var(--typo-size-default);
-  font-weight: var(--typo-body-weight-default);
-  letter-spacing: var(--typo-letter-spacing);
-  line-height: var(--typo-line-height);
-}
+    inline-size: 100%;
+    inset-block-start: var(--skip-links-nav-hidden-offset);
+    inset-inline-start: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+  }
 
-h1,
-h2,
-h3 {
-  font-family: var(--typo-heading-family);
-  font-weight: var(--typo-heading-weight-default);
-  line-height: 1.2;
-}
+  /* :where() keeps anchor specificity flat so later prose-link rules
+     stay in ascending specificity order. */
+  :where(.skip-links-nav) a {
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    display: block;
+    inline-size: 100%;
+    inset-block-start: 0;
+    opacity: 0;
+    outline: var(--border-primary);
+    padding-block: var(--size-16);
+    position: absolute;
+    text-align: center;
+    transition:
+      inset-block-start 0.3s ease-in-out,
+      opacity 0.5s ease-in-out;
+  }
 
-h1 {
-  font-size: var(--typo-size-xl);
-}
+  :where(.skip-links-nav) a:focus {
+    inset-block-start: calc(-1 * var(--skip-links-nav-hidden-offset));
+    opacity: 1;
+    text-decoration: none;
+    z-index: var(--skip-links-nav-z-index);
+  }
 
-h2 {
-  font-size: var(--typo-size-lg);
-}
+  @media screen and (prefers-reduced-motion: reduce) {
+    :where(.skip-links-nav) a {
+      transition: none;
+    }
+  }
 
-h3 {
-  font-size: var(--typo-size-md);
-}
+  .site-header {
+    align-items: center;
+    border-block-end: var(--border-primary);
+    display: flex;
+    gap: var(--size-16);
+    justify-content: space-between;
+    padding: var(--size-16);
+  }
 
-.visually-hidden {
-  border: 0;
-  clip-path: inset(50%);
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  white-space: nowrap;
-  width: 1px;
-}
+  .site-header__brand {
+    align-items: center;
+    color: var(--color-text-primary);
+    display: inline-flex;
+    font: var(--font-heading-sm-md);
+    gap: var(--size-8);
+    text-decoration: none;
+  }
 
-:focus-visible {
-  outline: 2px solid var(--color-focus-ring);
-  outline-offset: 2px;
-}
+  .site-header__brand-mark {
+    block-size: var(--size-32);
+    color: var(--color-primary);
+    inline-size: var(--size-32);
+  }
 
-/* ========================================
- * Page shell layout
- * ======================================== */
+  .site-main {
+    margin-inline: auto;
+    max-inline-size: var(--max-content-size);
+    padding-block: var(--size-32);
+    padding-inline: var(--size-16);
+  }
 
-.site-header {
-  align-items: center;
-  border-block-end: 1px solid var(--color-border);
-  display: flex;
-  gap: var(--size-16);
-  justify-content: space-between;
-  padding-block: var(--size-16);
-  padding-inline: var(--size-16);
-}
+  .site-intro {
+    color: var(--color-text-secondary);
+    margin-block-start: var(--size-16);
+  }
 
-.site-header__brand {
-  align-items: center;
-  color: var(--color-text-primary);
-  display: inline-flex;
-  font-family: var(--typo-heading-family);
-  font-size: var(--typo-size-sm-md);
-  font-weight: var(--typo-heading-weight-default);
-  gap: var(--size-8);
-  text-decoration: none;
-}
+  .site-footer {
+    border-block-start: var(--border-primary);
+    color: var(--color-text-secondary);
+    padding-block: var(--size-24);
+    padding-inline: var(--size-16);
+  }
 
-.site-header__brand-mark {
-  block-size: var(--size-32);
-  color: var(--color-primary);
-  inline-size: var(--size-32);
-}
+  .site-footer__content {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--size-16);
+    justify-content: space-between;
+    margin-inline: auto;
+    max-inline-size: var(--max-content-size);
+  }
 
-.site-main {
-  margin-inline: auto;
-  max-width: 48rem;
-  padding-block: var(--size-32);
-  padding-inline: var(--size-16);
-}
+  .site-footer__content a {
+    color: var(--color-primary);
+  }
 
-.site-intro {
-  color: var(--color-text-secondary);
-  margin-block-start: var(--size-16);
-}
+  .site-footer__links {
+    display: flex;
+    gap: var(--size-16);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
 
-.site-footer {
-  border-block-start: 1px solid var(--color-border);
-  color: var(--color-text-secondary);
-  padding-block: var(--size-24);
-  padding-inline: var(--size-16);
-}
+  /* In-text links need a non-color affordance (WCAG 1.4.1 / axe
+     link-in-text-block): underline all prose-context links in main and
+     footer. The header brand link stays non-underlined — it is a visually
+     distinct navigation element (logo mark), not a link in a text block. */
+  .site-main a,
+  .site-footer a {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
 
-.site-footer__content {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--size-16);
-  justify-content: space-between;
-  margin-inline: auto;
-  max-width: 48rem;
-}
+  .site-main a:hover,
+  .site-footer a:hover {
+    color: var(--color-primary-hover);
+    text-decoration-thickness: 0.125em;
+  }
 
-.site-footer__nav a,
-.site-footer__content a {
-  color: var(--color-primary);
-}
-
-.site-footer__nav {
-  display: flex;
-  gap: var(--size-16);
-}
-
-/* In-text links need a non-color affordance (WCAG 1.4.1 / axe
-   link-in-text-block): underline all prose-context links in main and
-   footer. The header brand link stays non-underlined — it is a visually
-   distinct navigation element (logo mark), not a link in a text block. */
-.site-main a,
-.site-footer a {
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-}
-
-.site-main a:hover,
-.site-footer a:hover {
-  color: var(--color-primary-hover);
-  text-decoration-thickness: 0.125em;
-}
-
-.site-main a:focus-visible,
-.site-footer a:focus-visible {
-  color: var(--color-primary-hover);
+  .site-main a:focus-visible,
+  .site-footer a:focus-visible {
+    color: var(--color-primary-hover);
+  }
 }

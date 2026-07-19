@@ -2,15 +2,23 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="AraOwl is a quiz PWA for web developers. Test and retain your web development knowledge with quizzes built from MDN Web Docs, build custom AI quizzes, and study offline."
+      content="Test and sharpen your web platform knowledge with AraOwl — quizzes built from MDN Web Docs that work offline, plus custom AI quizzes on the topics you choose."
     />
     <title>AraOwl — Test your web knowledge</title>
   </head>
   <body>
+    <nav id="nav-access" aria-labelledby="skip-links-nav-label">
+      <span class="visually-hidden" id="skip-links-nav-label">Skip links</span>
+      <ul class="skip-links-nav">
+        <li>
+          <a href="#main-content">Skip to main content</a>
+        </li>
+      </ul>
+    </nav>
+
     <header class="site-header">
       <a href="/" class="site-header__brand">
         <svg
@@ -33,12 +41,12 @@
       <div id="theme-root"></div>
     </header>
 
-    <main class="site-main">
+    <main class="site-main" id="main-content" tabindex="-1">
       <h1 class="typo-display">AraOwl</h1>
       <p class="site-intro">
-        AraOwl helps you test and retain your web development knowledge with quizzes built straight
-        from MDN Web Docs. Study anywhere — quizzes work fully offline once installed — and when you
-        want to go deeper, build your own custom AI-generated quizzes on the topics you care about.
+        Test and sharpen your web platform knowledge with quizzes built straight from MDN Web Docs.
+        Study anywhere — quizzes work fully offline once installed — and when you want to go deeper,
+        build your own custom AI-generated quizzes on the topics you care about.
       </p>
       <div id="quiz-root"></div>
     </main>
@@ -51,8 +59,14 @@
         </p>
         <nav aria-labelledby="footer-nav-heading" class="site-footer__nav">
           <h2 class="visually-hidden" id="footer-nav-heading">Project links</h2>
-          <a href="https://github.com/schalkneethling/araowl/issues">File an issue</a>
-          <a href="https://github.com/schalkneethling/araowl">Contribute on GitHub</a>
+          <ul class="site-footer__links">
+            <li>
+              <a href="https://github.com/schalkneethling/araowl/issues">File an issue</a>
+            </li>
+            <li>
+              <a href="https://github.com/schalkneethling/araowl">Contribute on GitHub</a>
+            </li>
+          </ul>
         </nav>
       </div>
     </footer>
