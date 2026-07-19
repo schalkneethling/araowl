@@ -1,0 +1,192 @@
+/* ========================================
+ * AraOwl Design Tokens
+ * Spacing/border/z-index/transition scales carried over from the
+ * css-tokens scaffold. Typography lives in typography.css. Colors below
+ * are derived from the AraOwl brand palette (Coolors) and converted to
+ * oklch(). Every text/surface pairing is contrast-checked against WCAG AA
+ * (4.5:1 normal text / 3:1 non-text & large text) — see the comment next
+ * to each semantic token for the verified ratio.
+ * ======================================== */
+
+:root {
+  /* ========================================
+   * Spacing / Size Scale
+   * Token name = pixel value (--size-16 = 16px = 1rem)
+   * ======================================== */
+  --size-4: 0.25rem; /* 4px */
+  --size-8: 0.5rem; /* 8px */
+  --size-12: 0.75rem; /* 12px */
+  --size-16: 1rem; /* 16px */
+  --size-20: 1.25rem; /* 20px */
+  --size-24: 1.5rem; /* 24px */
+  --size-32: 2rem; /* 32px */
+  --size-40: 2.5rem; /* 40px */
+  --size-48: 3rem; /* 48px */
+  --size-64: 4rem; /* 64px */
+  --size-80: 5rem; /* 80px */
+  --size-96: 6rem; /* 96px */
+
+  /* ========================================
+   * Border Radius (uses size tokens)
+   * ======================================== */
+  --radius-sm: var(--size-4);
+  --radius-md: var(--size-8);
+  --radius-lg: var(--size-12);
+  --radius-xl: var(--size-16);
+  --radius-full: 9999px;
+
+  /* ========================================
+   * Z-Index Layers
+   * ======================================== */
+  --layer-send-to-back: -1;
+  --layer-dropdown: 100;
+  --layer-modal: 300;
+  --layer-toast: 400;
+  --layer-bring-to-front: 9999;
+
+  /* ========================================
+   * Transitions
+   * ======================================== */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* ========================================
+   * Brand Palette (raw, theme-independent)
+   * Converted from the Coolors hex palette to oklch(). These are
+   * reference/decorative tokens — use the semantic tokens below for
+   * text/surface pairings so contrast stays verified.
+   * ======================================== */
+  --brand-rich-black: oklch(16.9% 0.0314 222.65deg); /* #001219 */
+  --brand-dark-teal: oklch(44.85% 0.081 218.73deg); /* #005f73 */
+  --brand-teal: oklch(60.24% 0.101 197.4deg); /* #0a9396 */
+  --brand-tint: oklch(81.57% 0.0701 171.43deg); /* #94d2bd */
+  --brand-sand: oklch(88.4% 0.0677 91.51deg); /* #e9d8a6 */
+  --brand-amber: oklch(75.47% 0.1621 71.4deg); /* #ee9b00 */
+  --brand-orange: oklch(61.89% 0.1537 54.41deg); /* #ca6702 */
+  --brand-rust: oklch(53.78% 0.1703 39.15deg); /* #bb3e03 */
+  --brand-red: oklch(48.65% 0.179 30.2deg); /* #ae2012 */
+  --brand-dark-red: oklch(45.44% 0.1568 24.59deg); /* #9b2226 */
+
+  /* ========================================
+   * Colors - Light Mode (Default)
+   * ======================================== */
+
+  /* Surfaces */
+  --color-background: oklch(98.5% 0.007 88.64deg); /* near-white, sand-tinted page bg */
+  --color-surface: oklch(100% 0 0deg); /* pure white — cards / elevated */
+  --color-surface-sunken: oklch(95% 0.02 90deg); /* soft sand — inset panels */
+  --color-border: oklch(90% 0.015 90deg);
+
+  /* Text — verified against --color-background (98.5% L) */
+  --color-text-primary: var(--brand-rich-black); /* 18.29:1 */
+  --color-text-secondary: oklch(44.83% 0.0373 219.17deg); /* 7.09:1 */
+  --color-text-muted: oklch(48.3% 0.0395 219.94deg); /* 6.10:1 */
+
+  /* Primary / brand — dark-teal so white button text clears AA (7.28:1) */
+  --color-primary: var(--brand-dark-teal);
+  --color-primary-hover: oklch(39% 0.081 218.73deg); /* deepen on hover, 9.27:1 w/ white text */
+  --color-primary-foreground: oklch(100% 0 0deg);
+
+  /* Accent — amber paired with rich-black foreground (8.47:1) */
+  --color-accent: var(--brand-amber);
+  --color-accent-hover: oklch(70% 0.1621 71.4deg);
+  --color-accent-foreground: var(--brand-rich-black);
+
+  /* Success — teal family. Text on bg = 6.98:1; bg+foreground = 11.10:1 */
+  --color-success: var(--brand-dark-teal);
+  --color-success-background: var(--brand-tint);
+  --color-success-foreground: var(--brand-rich-black);
+
+  /* Warning — orange hue darkened to clear AA as text (4.69:1); soft bg pairs
+     at 15.44:1 */
+  --color-warning: oklch(56% 0.1537 54.41deg);
+  --color-warning-background: oklch(93% 0.04 71.4deg);
+  --color-warning-foreground: var(--brand-rich-black);
+
+  /* Error / incorrect — red (6.68:1); soft bg pairs at 15.82:1 */
+  --color-error: var(--brand-red);
+  --color-error-background: oklch(94% 0.03 30.2deg);
+  --color-error-foreground: var(--brand-rich-black);
+
+  /* Focus ring — primary teal, 6.98:1 vs background, 7.28:1 vs surface */
+  --color-focus-ring: var(--brand-dark-teal);
+}
+
+/* ========================================
+ * Colors - Dark Mode
+ * Mirrors the light-mode custom properties with dark-safe values.
+ * ======================================== */
+:root[data-theme="dark"] {
+  /* Surfaces */
+  --color-background: var(--brand-rich-black);
+  --color-surface: oklch(24% 0.032 222.65deg); /* elevated panel */
+  --color-surface-sunken: oklch(12% 0.028 222.65deg); /* recessed panel */
+  --color-border: oklch(30% 0.02 222.65deg);
+
+  /* Text — verified against --color-background (16.9% L) and --color-surface (24% L) */
+  --color-text-primary: oklch(96% 0.015 90deg); /* 17.06:1 */
+  --color-text-secondary: var(--brand-sand); /* 13.48:1 */
+  --color-text-muted: var(--brand-tint); /* 11.10:1 */
+
+  /* Primary / brand — brighter teal so it reads as text on both bg (6.18:1)
+     and elevated surface (5.28:1); rich-black foreground for filled buttons */
+  --color-primary: oklch(65% 0.101 197.4deg);
+  --color-primary-hover: oklch(72% 0.101 197.4deg);
+  --color-primary-foreground: var(--brand-rich-black);
+
+  /* Accent — amber still clears AA against rich-black (8.47:1) */
+  --color-accent: var(--brand-amber);
+  --color-accent-hover: oklch(80% 0.1621 71.4deg);
+  --color-accent-foreground: var(--brand-rich-black);
+
+  /* Success — teal family, tint text (11.10:1); dark teal-tinted panel bg */
+  --color-success: var(--brand-tint);
+  --color-success-background: oklch(24% 0.05 197.4deg);
+  --color-success-foreground: oklch(96% 0.015 90deg);
+
+  /* Warning — lightened orange, verified vs both bg (5.85:1) and elevated
+     surface (4.99:1) */
+  --color-warning: oklch(66% 0.1537 54.41deg);
+  --color-warning-background: oklch(24% 0.05 54.41deg);
+  --color-warning-foreground: oklch(96% 0.015 90deg);
+
+  /* Error / incorrect — lightened red, verified vs both bg (5.44:1) and
+     elevated surface (4.64:1) */
+  --color-error: oklch(65% 0.179 30.2deg);
+  --color-error-background: oklch(24% 0.05 30.2deg);
+  --color-error-foreground: oklch(96% 0.015 90deg);
+
+  /* Focus ring — tint, 11.10:1 vs background, 9.47:1 vs surface */
+  --color-focus-ring: var(--brand-tint);
+}
+
+/* System preference fallback so "system" theme works before JS runs and
+   sets data-theme. Skipped when the user has explicitly chosen light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-background: var(--brand-rich-black);
+    --color-surface: oklch(24% 0.032 222.65deg);
+    --color-surface-sunken: oklch(12% 0.028 222.65deg);
+    --color-border: oklch(30% 0.02 222.65deg);
+    --color-text-primary: oklch(96% 0.015 90deg);
+    --color-text-secondary: var(--brand-sand);
+    --color-text-muted: var(--brand-tint);
+    --color-primary: oklch(65% 0.101 197.4deg);
+    --color-primary-hover: oklch(72% 0.101 197.4deg);
+    --color-primary-foreground: var(--brand-rich-black);
+    --color-accent: var(--brand-amber);
+    --color-accent-hover: oklch(80% 0.1621 71.4deg);
+    --color-accent-foreground: var(--brand-rich-black);
+    --color-success: var(--brand-tint);
+    --color-success-background: oklch(24% 0.05 197.4deg);
+    --color-success-foreground: oklch(96% 0.015 90deg);
+    --color-warning: oklch(66% 0.1537 54.41deg);
+    --color-warning-background: oklch(24% 0.05 54.41deg);
+    --color-warning-foreground: oklch(96% 0.015 90deg);
+    --color-error: oklch(65% 0.179 30.2deg);
+    --color-error-background: oklch(24% 0.05 30.2deg);
+    --color-error-foreground: oklch(96% 0.015 90deg);
+    --color-focus-ring: var(--brand-tint);
+  }
+}

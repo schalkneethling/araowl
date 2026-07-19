@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="AraOwl is a quiz PWA for web developers. Test and retain your web development knowledge with quizzes built from MDN Web Docs, build custom AI quizzes, and study offline."
+    />
+    <title>AraOwl — Test your web knowledge</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <a href="/" class="site-header__brand">
+        <svg
+          class="site-header__brand-mark"
+          viewBox="0 0 32 32"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <circle cx="16" cy="17" r="13" fill="currentColor" />
+          <circle cx="11" cy="15" r="4.5" fill="var(--color-background)" />
+          <circle cx="21" cy="15" r="4.5" fill="var(--color-background)" />
+          <circle cx="11" cy="15" r="2" fill="currentColor" />
+          <circle cx="21" cy="15" r="2" fill="currentColor" />
+          <path d="M16 19 L13.5 23 L18.5 23 Z" fill="var(--color-background)" />
+          <path d="M4 10 L11 14 L4 18 Z" fill="currentColor" />
+          <path d="M28 10 L21 14 L28 18 Z" fill="currentColor" />
+        </svg>
+        <span class="visually-hidden">AraOwl home</span>
+      </a>
+      <div id="theme-root"></div>
+    </header>
+
+    <main class="site-main">
+      <h1 class="typo-display">AraOwl</h1>
+      <p class="site-intro">
+        AraOwl helps you test and retain your web development knowledge with quizzes built straight
+        from MDN Web Docs. Study anywhere — quizzes work fully offline once installed — and when you
+        want to go deeper, build your own custom AI-generated quizzes on the topics you care about.
+      </p>
+      <div id="quiz-root"></div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__content">
+        <p>
+          Made with love and digital robots by
+          <a href="https://schalkneethling.com">Schalk Neethling</a>
+        </p>
+        <nav aria-labelledby="footer-nav-heading" class="site-footer__nav">
+          <h2 class="visually-hidden" id="footer-nav-heading">Project links</h2>
+          <a href="https://github.com/schalkneethling/araowl/issues">File an issue</a>
+          <a href="https://github.com/schalkneethling/araowl">Contribute on GitHub</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
