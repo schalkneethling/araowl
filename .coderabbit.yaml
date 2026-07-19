@@ -1,0 +1,13 @@
+# CodeRabbit configuration — https://docs.coderabbit.ai/reference/yaml-template
+#
+# The .claude/skills and .agents/skills directories contain vendored AI-agent
+# skill documentation copied from upstream repositories
+# (schalkneethling/create-project-calavera, vercel-labs/agent-skills).
+# Findings in those files belong upstream, not in this repo — excluding them
+# keeps reviews focused on AraOwl's own code.
+
+reviews:
+  path_filters:
+    - "!.claude/skills/**"
+    - "!.agents/skills/**"
+    - "!pnpm-lock.yaml"
