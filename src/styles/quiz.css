@@ -1,0 +1,171 @@
+/* Quiz island: bespoke layout for the shadcn-based start/quiz/results/history
+   views. shadcn components (Card, Button, RadioGroup) keep their own Tailwind
+   classes; this file only adds structural layout and the correct/incorrect
+   feedback treatment, all via existing design tokens. */
+
+.quiz-app {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-24);
+  margin-block-start: var(--size-32);
+}
+
+/* Start view */
+
+.quiz-start-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-16);
+}
+
+.quiz-start-card__error {
+  color: var(--color-error);
+}
+
+/* Progress */
+
+.quiz-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-8);
+}
+
+.quiz-progress__bar {
+  block-size: var(--size-12);
+  border-radius: var(--radius-sm);
+  inline-size: 100%;
+}
+
+.quiz-progress__label {
+  color: var(--color-text-secondary);
+}
+
+/* Question card */
+
+.quiz-question-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-16);
+}
+
+.quiz-question-card__heading:focus-visible {
+  outline: none;
+}
+
+/* Hints */
+
+.quiz-hints {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-8);
+}
+
+.quiz-hints__list {
+  color: var(--color-text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4);
+  margin: 0;
+  padding-inline-start: var(--size-24);
+}
+
+/* Feedback */
+
+.quiz-feedback {
+  border: var(--border-primary);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-12);
+  padding: var(--size-16);
+}
+
+.quiz-feedback__status {
+  align-items: center;
+  display: flex;
+  font-weight: var(--typo-heading-weight-default);
+  gap: var(--size-8);
+}
+
+.quiz-feedback__status--correct {
+  color: var(--color-success);
+}
+
+.quiz-feedback__status--incorrect {
+  color: var(--color-error);
+}
+
+.quiz-feedback__link {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--size-4);
+  inline-size: fit-content;
+}
+
+/* Results */
+
+.quiz-results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-16);
+}
+
+.quiz-results__heading {
+  font: var(--font-heading-md);
+}
+
+.quiz-results__score {
+  font: var(--font-heading-lg);
+}
+
+.quiz-results__table {
+  border-collapse: collapse;
+  inline-size: 100%;
+}
+
+.quiz-results__table caption {
+  caption-side: top;
+  color: var(--color-text-secondary);
+  text-align: start;
+}
+
+.quiz-results__table td,
+.quiz-results__table th {
+  border-block-end: var(--border-primary);
+  padding: var(--size-8);
+  text-align: start;
+}
+
+/* History */
+
+.quiz-history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-16);
+}
+
+.quiz-history__heading {
+  font: var(--font-heading-md);
+}
+
+.quiz-history__empty {
+  color: var(--color-text-secondary);
+}
+
+.quiz-history__item {
+  border-block-end: var(--border-primary);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-16);
+  padding-block: var(--size-8);
+}
+
+.quiz-history__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.quiz-history__topics {
+  color: var(--color-text-secondary);
+}

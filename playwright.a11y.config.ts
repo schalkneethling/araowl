@@ -5,7 +5,7 @@ export default defineConfig({
   testMatch: "**/*.a11y.spec.ts",
   reporter: [["list"], ["@schalkneethling/axe-aggregate-reporter/reporter"]],
   webServer: {
-    command: "vp preview --port 4173",
+    command: "vp build && vp preview --port 4173",
     url: "http://localhost:4173",
     reuseExistingServer: !process.env.CI,
   },

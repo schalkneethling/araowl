@@ -5,7 +5,9 @@ export default defineConfig({
   testIgnore: "**/*.a11y.spec.ts",
   reporter: [["list"]],
   webServer: {
-    command: "vp preview --port 4173",
+    // Build first: vp preview serves whatever is in dist/, which would
+    // otherwise silently test stale output.
+    command: "vp build && vp preview --port 4173",
     url: "http://localhost:4173",
     reuseExistingServer: !process.env.CI,
   },
