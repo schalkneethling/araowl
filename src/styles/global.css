@@ -23,7 +23,7 @@
 @import "@fontsource/poppins/400.css";
 @import "@fontsource/poppins/600.css";
 @import "@fontsource/merriweather/400.css";
-@import "@fontsource/merriweather/700.css";
+@import "@fontsource/merriweather/600.css";
 @import "./tokens.css" layer(tokens);
 @import "./typography.css" layer(typography);
 @import "./utils.css" layer(utils);
