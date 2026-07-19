@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Test and sharpen your web platform knowledge with AraOwl — quizzes built from MDN Web Docs that work offline, plus custom AI quizzes on the topics you choose."
+    />
+    <title>AraOwl — Test your web knowledge</title>
+  </head>
+  <body>
+    <nav id="nav-access" aria-labelledby="skip-links-nav-label">
+      <span class="visually-hidden" id="skip-links-nav-label">Skip links</span>
+      <ul class="skip-links-nav">
+        <li>
+          <a href="#main-content">Skip to main content</a>
+        </li>
+      </ul>
+    </nav>
+
+    <header class="site-header">
+      <a href="/" class="site-header__brand">
+        <svg
+          class="site-header__brand-mark"
+          viewBox="0 0 32 32"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <circle cx="16" cy="17" r="13" fill="currentColor" />
+          <circle cx="11" cy="15" r="4.5" fill="var(--color-background)" />
+          <circle cx="21" cy="15" r="4.5" fill="var(--color-background)" />
+          <circle cx="11" cy="15" r="2" fill="currentColor" />
+          <circle cx="21" cy="15" r="2" fill="currentColor" />
+          <path d="M16 19 L13.5 23 L18.5 23 Z" fill="var(--color-background)" />
+          <path d="M4 10 L11 14 L4 18 Z" fill="currentColor" />
+          <path d="M28 10 L21 14 L28 18 Z" fill="currentColor" />
+        </svg>
+        <span class="visually-hidden">AraOwl home</span>
+      </a>
+      <div id="theme-root"></div>
+    </header>
+
+    <main class="site-main" id="main-content" tabindex="-1">
+      <h1 class="typo-display">AraOwl</h1>
+      <p class="site-intro">
+        Test and sharpen your web platform knowledge with quizzes built straight from MDN Web Docs.
+        Study anywhere — quizzes work fully offline once installed — and when you want to go deeper,
+        build your own custom AI-generated quizzes on the topics you care about.
+      </p>
+      <div id="quiz-root"></div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__content">
+        <p>
+          Made with love and digital robots by
+          <a href="https://schalkneethling.com">Schalk Neethling</a>
+        </p>
+        <nav aria-labelledby="footer-nav-heading" class="site-footer__nav">
+          <h2 class="visually-hidden" id="footer-nav-heading">Project links</h2>
+          <ul class="site-footer__links">
+            <li>
+              <a href="https://github.com/schalkneethling/araowl/issues">File an issue</a>
+            </li>
+            <li>
+              <a href="https://github.com/schalkneethling/araowl">Contribute on GitHub</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

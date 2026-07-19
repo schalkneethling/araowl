@@ -1,0 +1,116 @@
+/* ========================================
+ * AraOwl Design Tokens
+ *
+ * Colors are derived from the AraOwl brand palette (Coolors) converted to
+ * oklch(). Theming uses color-scheme + light-dark(): every semantic color
+ * declares its light and dark value in one place, and the theme switcher
+ * only ever toggles color-scheme via [data-theme]. System preference works
+ * with zero JavaScript.
+ *
+ * Every text/surface pairing was contrast-checked against WCAG AA (4.5:1
+ * normal text / 3:1 non-text) — ratios noted per token as light | dark.
+ * ======================================== */
+
+:root {
+  color-scheme: light dark;
+
+  /* ========================================
+   * Spacing / Size Scale
+   * Token name = pixel value (--size-16 = 16px = 1rem)
+   * ======================================== */
+  --size-4: 0.25rem; /* 4px */
+  --size-8: 0.5rem; /* 8px */
+  --size-12: 0.75rem; /* 12px */
+  --size-16: 1rem; /* 16px */
+  --size-24: 1.5rem; /* 24px */
+  --size-32: 2rem; /* 32px */
+
+  /* ========================================
+   * Layout
+   * ======================================== */
+  --max-content-size: 48rem;
+
+  /* ========================================
+   * Border Radius (uses size tokens)
+   * ======================================== */
+  --radius-sm: var(--size-4);
+  --radius-md: var(--size-8);
+  --radius-lg: var(--size-12);
+
+  /* ========================================
+   * Borders
+   * ======================================== */
+  --border-primary: 1px solid var(--color-border);
+
+  /* ========================================
+   * Brand Palette (raw, theme-independent)
+   * Reference/decorative tokens — use the semantic tokens below for
+   * text/surface pairings so contrast stays verified.
+   * ======================================== */
+  --brand-rich-black: oklch(16.9% 0.0314 222.65deg); /* #001219 */
+  --brand-dark-teal: oklch(44.85% 0.081 218.73deg); /* #005f73 */
+  --brand-teal: oklch(60.24% 0.101 197.4deg); /* #0a9396 */
+  --brand-tint: oklch(81.57% 0.0701 171.43deg); /* #94d2bd */
+  --brand-sand: oklch(88.4% 0.0677 91.51deg); /* #e9d8a6 */
+  --brand-amber: oklch(75.47% 0.1621 71.4deg); /* #ee9b00 */
+  --brand-orange: oklch(61.89% 0.1537 54.41deg); /* #ca6702 */
+  --brand-red: oklch(48.65% 0.179 30.2deg); /* #ae2012 */
+  --brand-dark-red: oklch(45.44% 0.1568 24.59deg); /* #9b2226 */
+
+  /* ========================================
+   * Semantic Colors — light-dark(<light>, <dark>)
+   * ======================================== */
+
+  /* Surfaces */
+  --color-background: light-dark(oklch(98.5% 0.007 88.64deg), var(--brand-rich-black));
+  --color-surface: light-dark(oklch(100% 0 0deg), oklch(24% 0.032 222.65deg));
+  --color-surface-sunken: light-dark(oklch(95% 0.02 90deg), oklch(12% 0.028 222.65deg));
+  --color-border: light-dark(oklch(90% 0.015 90deg), oklch(30% 0.02 222.65deg));
+
+  /* Text — vs background: 18.29:1 | 17.06:1, 7.09:1 | 13.48:1, 6.10:1 | 11.10:1 */
+  --color-text-primary: light-dark(var(--brand-rich-black), oklch(96% 0.015 90deg));
+  --color-text-secondary: light-dark(oklch(44.83% 0.0373 219.17deg), var(--brand-sand));
+  --color-text-muted: light-dark(oklch(48.3% 0.0395 219.94deg), var(--brand-tint));
+
+  /* Primary / brand — as filled bg with its foreground: 7.28:1 | 5.11:1;
+     as text on background: 6.98:1 | 6.18:1 */
+  --color-primary: light-dark(var(--brand-dark-teal), oklch(65% 0.101 197.4deg));
+  --color-primary-hover: light-dark(oklch(39% 0.081 218.73deg), oklch(72% 0.101 197.4deg));
+  --color-primary-foreground: light-dark(oklch(100% 0 0deg), var(--brand-rich-black));
+
+  /* Accent — amber with rich-black foreground in both themes: 8.47:1 */
+  --color-accent: var(--brand-amber);
+  --color-accent-foreground: var(--brand-rich-black);
+
+  /* Success (teal family) — text on background: 6.98:1 | 11.10:1;
+     banner bg+fg: 11.10:1 | 14.35:1 */
+  --color-success: light-dark(var(--brand-dark-teal), var(--brand-tint));
+  --color-success-background: light-dark(var(--brand-tint), oklch(24% 0.05 197.4deg));
+  --color-success-foreground: light-dark(var(--brand-rich-black), oklch(96% 0.015 90deg));
+
+  /* Warning (orange hue, lightness tuned per scheme) — text on background:
+     4.69:1 | 5.85:1; banner bg+fg: 15.44:1 | 14.86:1 */
+  --color-warning: light-dark(oklch(56% 0.1537 54.41deg), oklch(66% 0.1537 54.41deg));
+  --color-warning-background: light-dark(oklch(93% 0.04 71.4deg), oklch(24% 0.05 54.41deg));
+  --color-warning-foreground: light-dark(var(--brand-rich-black), oklch(96% 0.015 90deg));
+
+  /* Error / incorrect — text on background: 6.68:1 | 5.44:1;
+     banner bg+fg: 15.82:1 | 14.95:1 */
+  --color-error: light-dark(var(--brand-red), oklch(65% 0.179 30.2deg));
+  --color-error-background: light-dark(oklch(94% 0.03 30.2deg), oklch(24% 0.05 30.2deg));
+  --color-error-foreground: light-dark(var(--brand-rich-black), oklch(96% 0.015 90deg));
+
+  /* Focus ring — vs background: 6.98:1 | 11.10:1 */
+  --color-focus-ring: light-dark(var(--brand-dark-teal), var(--brand-tint));
+}
+
+/* Explicit theme choice (set by the theme switcher island). Without a
+   data-theme attribute, color-scheme: light dark above follows the system
+   preference automatically — no JS required for "system" mode. */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}

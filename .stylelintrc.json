@@ -1,0 +1,45 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "plugins": [
+    "stylelint-order",
+    "stylelint-plugin-use-baseline",
+    "@schalkneethling/stylelint-plugin-css-property-type-validator"
+  ],
+  "rules": {
+    "plugin/use-baseline": [true, { "available": "widely", "severity": "warning" }],
+    "css-property-type-validator/valid-property-types": [true, {}],
+    "order/properties-alphabetical-order": true,
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": [
+          "theme",
+          "custom-variant",
+          "variant",
+          "utility",
+          "plugin",
+          "source",
+          "reference",
+          "config",
+          "apply"
+        ]
+      }
+    ],
+    "import-notation": "string",
+    "selector-class-pattern": [
+      "^[a-z]([a-z0-9-]+)?(__([a-z0-9]+-?)+)?(--([a-z0-9]+-?)+)?$",
+      {
+        "message": "Expected class selector to be kebab-case or BEM (block__element--modifier)"
+      }
+    ]
+  },
+  "ignoreFiles": ["dist/**", "node_modules/**"],
+  "overrides": [
+    {
+      "files": ["src/styles/global.css"],
+      "rules": {
+        "css-property-type-validator/valid-property-types": null
+      }
+    }
+  ]
+}

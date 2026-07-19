@@ -1,0 +1,12 @@
+/* Utility classes. Imported into the `utils` layer so they win over base,
+   typography, component, and layout styles. */
+
+/* https://www.tpgi.com/the-anatomy-of-visually-hidden/ */
+.visually-hidden:not(:focus, :active) {
+  block-size: 1px;
+  clip-path: inset(50%);
+  inline-size: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+}

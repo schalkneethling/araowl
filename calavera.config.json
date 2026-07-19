@@ -1,0 +1,41 @@
+{
+  "$schema": "https://calavera.schalkneethling.com/calavera.config.schema.json",
+  "version": 1,
+  "profile": "modern",
+  "packageManager": "pnpm",
+  "integrations": [
+    "editorconfig",
+    "typescript",
+    "oxlint",
+    "oxlint-eslint",
+    "oxlint-typescript",
+    "oxlint-unicorn",
+    "oxlint-oxc",
+    "oxlint-import",
+    "oxlint-node",
+    "oxlint-promise",
+    "oxlint-vitest",
+    "oxlint-jsdoc",
+    "oxfmt",
+    "stylelint",
+    "stylelint-standard",
+    "stylelint-order",
+    "stylelint-baseline",
+    "css-property-type-validator"
+  ],
+  "scripts": {
+    "lint": true,
+    "lint:fix": true,
+    "format": true,
+    "format:check": true,
+    "typecheck": true,
+    "quality": true
+  },
+  "ai": [
+    {
+      "type": "agent",
+      "src": "agents/technical-devils-advocate.md",
+      "target": "claude-code"
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+:root {
+  --typescale-ratio: 1.2; /* ratio this static scale was generated against */
+  --typo-body-family: "Poppins", system-ui, sans-serif;
+  --typo-heading-family: "Merriweather", georgia, serif;
+  --typo-body-weight-default: 400;
+  --typo-heading-weight-default: 600;
+  --typo-line-height: 1.5;
+  --typo-heading-line-height: 1.25;
+  --typo-letter-spacing: 0;
+  --typo-size-xs: clamp(0.607rem, 0.558rem + 0.25vw, 0.781rem);
+  --typo-size-small: clamp(0.729rem, 0.669rem + 0.3vw, 0.937rem);
+  --typo-size-default: clamp(0.875rem, 0.804rem + 0.36vw, 1.125rem);
+  --typo-size-sm-md: clamp(1.05rem, 0.964rem + 0.43vw, 1.35rem);
+  --typo-size-md: clamp(1.26rem, 1.157rem + 0.51vw, 1.62rem);
+  --typo-size-lg: clamp(1.512rem, 1.389rem + 0.62vw, 1.944rem);
+  --typo-size-xl: clamp(1.815rem, 1.667rem + 0.74vw, 2.333rem);
+  --typo-size-xxl: clamp(2.177rem, 1.999rem + 0.89vw, 2.799rem);
+  --typo-size-display: clamp(2.613rem, 2.399rem + 1.07vw, 3.359rem);
+
+  /* Composed custom properties for the font shorthand:
+     font: <weight> <size> / <line-height> <family> */
+  --font-body-default: var(--typo-body-weight-default) var(--typo-size-default) /
+    var(--typo-line-height) var(--typo-body-family);
+  --font-heading-sm-md: var(--typo-heading-weight-default) var(--typo-size-sm-md) /
+    var(--typo-heading-line-height) var(--typo-heading-family);
+  --font-heading-md: var(--typo-heading-weight-default) var(--typo-size-md) /
+    var(--typo-heading-line-height) var(--typo-heading-family);
+  --font-heading-lg: var(--typo-heading-weight-default) var(--typo-size-lg) /
+    var(--typo-heading-line-height) var(--typo-heading-family);
+  --font-heading-xl: var(--typo-heading-weight-default) var(--typo-size-xl) /
+    var(--typo-heading-line-height) var(--typo-heading-family);
+}
+
+.typo-xs {
+  font: var(--typo-body-weight-default) var(--typo-size-xs) / var(--typo-line-height)
+    var(--typo-body-family);
+  letter-spacing: var(--typo-letter-spacing);
+}
+
+.typo-small {
+  font: var(--typo-body-weight-default) var(--typo-size-small) / var(--typo-line-height)
+    var(--typo-body-family);
+  letter-spacing: var(--typo-letter-spacing);
+}
+
+.typo-default {
+  font: var(--font-body-default);
+  letter-spacing: var(--typo-letter-spacing);
+}
+
+.typo-sm-md {
+  font: var(--font-heading-sm-md);
+  letter-spacing: var(--typo-letter-spacing);
+}
+
+.typo-md {
+  font: var(--font-heading-md);
+  letter-spacing: var(--typo-letter-spacing);
+}
+
+.typo-lg {
+  font: var(--font-heading-lg);
+  letter-spacing: var(--typo-letter-spacing);
+}
+
+.typo-xl {
+  font: var(--font-heading-xl);
+  letter-spacing: var(--typo-letter-spacing);
+}
+
+.typo-xxl {
+  font: var(--typo-heading-weight-default) var(--typo-size-xxl) / var(--typo-heading-line-height)
+    var(--typo-heading-family);
+  letter-spacing: var(--typo-letter-spacing);
+}
+
+.typo-display {
+  font: var(--typo-heading-weight-default) var(--typo-size-display) /
+    var(--typo-heading-line-height) var(--typo-heading-family);
+  letter-spacing: var(--typo-letter-spacing);
+}
