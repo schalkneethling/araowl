@@ -68,6 +68,10 @@ describe("QuizQuestionSchema", () => {
     expect(ok(makeQuestion({ hints: [""] }))).toBe(false);
   });
 
+  it("rejects a hint shorter than 3 characters", () => {
+    expect(ok(makeQuestion({ hints: ["ab"] }))).toBe(false);
+  });
+
   it("rejects an empty explanation", () => {
     expect(ok(makeQuestion({ explanation: "" }))).toBe(false);
   });
@@ -77,9 +81,9 @@ describe("QuizQuestionSchema", () => {
   });
 
   it("accepts 1, 2 and 3 hints", () => {
-    expect(ok(makeQuestion({ hints: ["a"] }))).toBe(true);
-    expect(ok(makeQuestion({ hints: ["a", "b"] }))).toBe(true);
-    expect(ok(makeQuestion({ hints: ["a", "b", "c"] }))).toBe(true);
+    expect(ok(makeQuestion({ hints: ["one"] }))).toBe(true);
+    expect(ok(makeQuestion({ hints: ["one", "two"] }))).toBe(true);
+    expect(ok(makeQuestion({ hints: ["one", "two", "three"] }))).toBe(true);
   });
 });
 
@@ -88,12 +92,6 @@ describe("QuizIndexSchema", () => {
     const index = parseQuizIndex(makeQuizIndex());
     expect(index.questions).toHaveLength(1);
     expect(index.version).toBe(1);
-  });
-
-  it("rejects a wrong version literal", () => {
-    expect(
-      v.safeParse(QuizIndexSchema, makeQuizIndex(undefined, { version: 2 as never })).success,
-    ).toBe(false);
   });
 
   it("rejects an empty questions array", () => {

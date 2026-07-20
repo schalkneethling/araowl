@@ -36,3 +36,8 @@ There is no "primary" platform or input method for AraOwl. Mobile, tablet, and d
 - Keyboard-only operation and screen reader announcements are first-class acceptance criteria, not an accessibility pass tacked on at the end.
 - Layout and interaction must hold up across viewport sizes — verify responsive behavior, not just that a fixed-width screenshot looks right.
 - axe scans and semantic/keyboard e2e tests catch a lot but not everything (e.g. visual layout collapse, touch target sizing) — pair automated checks with actual cross-surface verification (see the visual-verification lesson from Phase 1's radio-group bug).
+
+## Code style
+
+- Always use curly braces around `if`/`else`/`for`/`while` bodies, even single-statement ones. Enforced via `curly: "error"` in `.oxlintrc.json` — don't downgrade this rule.
+- Prefer `type` over `interface` for plain data shapes (e.g. component props). Reserve `interface` for contracts a class implements (e.g. `ScoreStore`, `QuizSource`) or that benefit from declaration merging.

@@ -48,10 +48,6 @@
   gap: var(--size-16);
 }
 
-.quiz-question-card__heading:focus-visible {
-  outline: none;
-}
-
 /* Hints */
 
 .quiz-hints {
@@ -122,6 +118,10 @@
 
 .quiz-results__score {
   font: var(--font-heading-lg);
+}
+
+.quiz-results__save-error {
+  color: var(--color-error);
 }
 
 .quiz-results__table {

@@ -28,7 +28,9 @@ export function computeScore(questions: QuizQuestion[], answers: AnswerRecord[])
 
   let correct = 0;
   for (const answer of answers) {
-    if (!answer.correct) continue;
+    if (!answer.correct) {
+      continue;
+    }
     correct += 1;
     const topic = topicOf.get(answer.questionId);
     if (topic) {
@@ -42,7 +44,9 @@ export function computeScore(questions: QuizQuestion[], answers: AnswerRecord[])
 /** Unique topics appearing in the quiz, in first-seen order. */
 function topicsIn(questions: QuizQuestion[]): Topic[] {
   const seen = new Set<Topic>();
-  for (const question of questions) seen.add(question.topic);
+  for (const question of questions) {
+    seen.add(question.topic);
+  }
   return [...seen];
 }
 

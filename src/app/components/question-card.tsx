@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { HintsSection } from "@/app/components/hints-section";
 
-interface QuestionCardProps {
+type QuestionCardProps = {
   question: QuizQuestion;
   phase: QuizPhase;
   hintsRevealed: number;
@@ -16,7 +16,7 @@ interface QuestionCardProps {
   onRevealHint: () => void;
   onAnswer: (chosenIndex: number) => void;
   onAdvance: () => void;
-}
+};
 
 /**
  * One question: heading, radio options, hints, and (once answered) feedback.
@@ -80,7 +80,9 @@ export function QuestionCard({
         {phase === "question" ? (
           <Button
             onPress={() => {
-              if (selectedOption !== null) onAnswer(Number(selectedOption));
+              if (selectedOption !== null) {
+                onAnswer(Number(selectedOption));
+              }
             }}
             isDisabled={selectedOption === null}
           >

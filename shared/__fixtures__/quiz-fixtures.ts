@@ -17,7 +17,7 @@ export function makeQuestion(overrides: Partial<QuizQuestion> = {}): QuizQuestio
 
 /** Three questions across two topics, used by engine and scoring tests. */
 export const threeQuestions: QuizQuestion[] = [
-  makeQuestion({ id: "q1", topic: "html", answerIndex: 0, hints: ["h1", "h2", "h3"] }),
+  makeQuestion({ id: "q1", topic: "html", answerIndex: 0, hints: ["hint 1", "hint 2", "hint 3"] }),
   makeQuestion({
     id: "q2",
     topic: "css",

@@ -18,7 +18,7 @@ export const QuizQuestionSchema = v.object({
     v.maxValue(3),
   ),
   hints: v.pipe(
-    v.array(v.pipe(v.string(), v.nonEmpty("Hint must not be empty"))),
+    v.array(v.pipe(v.string(), v.minLength(3, "Hint must be at least 3 characters"))),
     v.minLength(1, "At least 1 hint is required"),
     v.maxLength(3, "At most 3 hints are allowed"),
   ),
@@ -36,6 +36,10 @@ export const QuizIndexSchema = v.object({
   version: v.literal(1),
   generatedAt: v.pipe(v.string(), v.isoTimestamp("generatedAt must be an ISO-8601 timestamp")),
   source: v.picklist(["bundled", "ai"]),
+  // Only "at least 1" is enforced here: this schema validates both the
+  // hand-authored bundled index (currently 10 questions) and future
+  // AI-generated output. The 5-to-50-in-steps-of-5 count is a constraint on
+  // the *request* (BuildQuizRequest, Phase 4), not on this output manifest.
   questions: v.pipe(
     v.array(QuizQuestionSchema),
     v.minLength(1, "A quiz must contain at least 1 question"),
@@ -53,6 +57,8 @@ const AttemptAnswerSchema = v.object({
   questionId: v.pipe(v.string(), v.nonEmpty()),
   chosenIndex: v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(3)),
   correct: v.boolean(),
+  // 0-3 inclusive: not an index, a count. MAX_HINTS caps reveals at 3, so 0
+  // through 3 hints used are all valid; 4 would mean a 4th hint was shown.
   hintsUsed: v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(3)),
 });
 

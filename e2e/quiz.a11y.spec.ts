@@ -105,7 +105,9 @@ test("active question with hints and feedback has no violations", async ({
   makeAxeBuilder,
 }, testInfo) => {
   const first = questions[0];
-  if (!first) throw new Error("quiz manifest must have at least 1 question");
+  if (!first) {
+    throw new Error("quiz manifest must have at least 1 question");
+  }
 
   await startQuiz(page);
 

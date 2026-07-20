@@ -3,11 +3,11 @@ import type { QuizAttempt } from "@shared/schema";
 import type { ScoreStore } from "@/core/storage/score-store";
 import { formatAttemptDate, topicSummary } from "@/app/format";
 
-interface ScoreHistoryProps {
+type ScoreHistoryProps = {
   store: ScoreStore;
   /** Bumped by the app whenever a new attempt is saved, to trigger a refetch. */
   refreshKey: number;
-}
+};
 
 /** Past attempts pulled from the ScoreStore, refreshed whenever `refreshKey` changes. */
 export function ScoreHistory({ store, refreshKey }: ScoreHistoryProps) {
@@ -18,11 +18,15 @@ export function ScoreHistory({ store, refreshKey }: ScoreHistoryProps) {
     let cancelled = false;
     void store.listAttempts().then(
       (result) => {
-        if (!cancelled) setAttempts(result);
+        if (!cancelled) {
+          setAttempts(result);
+        }
       },
       (error: unknown) => {
         console.error("Failed to load quiz history", error);
-        if (!cancelled) setAttempts([]);
+        if (!cancelled) {
+          setAttempts([]);
+        }
       },
     );
     return () => {
@@ -31,7 +35,7 @@ export function ScoreHistory({ store, refreshKey }: ScoreHistoryProps) {
   }, [store, refreshKey]);
 
   return (
-    <section aria-labelledby={headingId} className="quiz-history">
+    <aside aria-labelledby={headingId} className="quiz-history">
       <h2 id={headingId} className="quiz-history__heading">
         Past attempts
       </h2>
@@ -52,6 +56,6 @@ export function ScoreHistory({ store, refreshKey }: ScoreHistoryProps) {
           ))}
         </ul>
       )}
-    </section>
+    </aside>
   );
 }

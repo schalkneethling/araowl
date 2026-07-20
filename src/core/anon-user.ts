@@ -10,7 +10,9 @@ type AnonStorage = Pick<Storage, "getItem" | "setItem">;
  */
 export function getAnonUserId(storage: AnonStorage): string {
   const existing = storage.getItem(ANON_USER_ID_KEY);
-  if (existing) return existing;
+  if (existing) {
+    return existing;
+  }
   const id = crypto.randomUUID();
   storage.setItem(ANON_USER_ID_KEY, id);
   return id;

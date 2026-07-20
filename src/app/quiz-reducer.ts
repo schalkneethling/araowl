@@ -57,15 +57,21 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { view: "error", message: action.message };
 
     case "REVEAL_HINT":
-      if (state.view !== "active") return state;
+      if (state.view !== "active") {
+        return state;
+      }
       return { view: "active", quiz: revealHint(state.quiz) };
 
     case "ANSWER":
-      if (state.view !== "active") return state;
+      if (state.view !== "active") {
+        return state;
+      }
       return { view: "active", quiz: answerQuestion(state.quiz, action.chosenIndex) };
 
     case "ADVANCE": {
-      if (state.view !== "active") return state;
+      if (state.view !== "active") {
+        return state;
+      }
       const next = advance(state.quiz);
       return isComplete(next) ? { view: "results", quiz: next } : { view: "active", quiz: next };
     }

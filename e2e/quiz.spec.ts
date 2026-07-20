@@ -57,7 +57,9 @@ test.describe("quiz island", () => {
       await expect(radios.nth(chosen)).toBeChecked();
 
       const correct = chosen === question.answerIndex;
-      if (correct) expectedCorrect += 1;
+      if (correct) {
+        expectedCorrect += 1;
+      }
 
       await page.getByRole("button", { name: "Check answer" }).press("Enter");
 
@@ -120,7 +122,8 @@ test.describe("quiz island", () => {
 
     await page.reload();
 
-    const history = page.getByRole("region", { name: "Past attempts" });
+    // ScoreHistory renders an <aside>, exposed as the "complementary" landmark role.
+    const history = page.getByRole("complementary", { name: "Past attempts" });
     const items = history.getByRole("listitem");
     await expect(items).toHaveCount(1);
     await expect(items.first()).toContainText(`${TOTAL_QUESTIONS} / ${TOTAL_QUESTIONS}`);
@@ -144,7 +147,9 @@ test.describe("quiz island", () => {
 
     const group = page.getByRole("radiogroup");
     const groupBox = await group.boundingBox();
-    if (!groupBox) throw new Error("radiogroup has no bounding box");
+    if (!groupBox) {
+      throw new Error("radiogroup has no bounding box");
+    }
 
     // Measure the rendered option rows (the labels); the role=radio inputs
     // themselves are visually hidden by React Aria.
@@ -154,7 +159,9 @@ test.describe("quiz island", () => {
     const boxes = [];
     for (let index = 0; index < 4; index++) {
       const box = await rows.nth(index).boundingBox();
-      if (!box) throw new Error(`option row ${index} has no bounding box`);
+      if (!box) {
+        throw new Error(`option row ${index} has no bounding box`);
+      }
       boxes.push(box);
     }
 
@@ -169,14 +176,18 @@ test.describe("quiz island", () => {
     for (let index = 1; index < sorted.length; index++) {
       const previous = sorted[index - 1];
       const currentRow = sorted[index];
-      if (!previous || !currentRow) throw new Error("missing bounding box");
+      if (!previous || !currentRow) {
+        throw new Error("missing bounding box");
+      }
       expect(currentRow.y).toBeGreaterThanOrEqual(previous.y + previous.height - 1);
     }
   });
 
   test("hints stay revealed, exhaust their button, and reset per question", async ({ page }) => {
     const [first, second] = questions;
-    if (!first || !second) throw new Error("quiz manifest must have at least 2 questions");
+    if (!first || !second) {
+      throw new Error("quiz manifest must have at least 2 questions");
+    }
 
     await startQuiz(page);
 
@@ -210,9 +221,11 @@ test.describe("quiz island", () => {
     await expect(
       page.getByRole("button", { name: `Reveal hint 1/${secondAvailable}` }),
     ).toBeVisible();
+
     for (const hint of first.hints) {
       await expect(page.getByText(hint)).toHaveCount(0);
     }
+
     await expect(page.locator(".quiz-hints__list")).toHaveCount(0);
   });
 });

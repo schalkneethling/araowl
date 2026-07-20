@@ -2,10 +2,10 @@ import type { StartPhaseState } from "@/app/quiz-reducer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
-interface StartViewProps {
+type StartViewProps = {
   state: StartPhaseState;
   onStart: () => void;
-}
+};
 
 /** Intro card for the quiz island: pitch, start button, and loading/error variants. */
 export function StartView({ state, onStart }: StartViewProps) {
