@@ -88,36 +88,46 @@ export function QuestionCard({
           </Button>
         ) : null}
 
-        {phase === "feedback" && lastAnswer ? (
-          <div aria-live="polite" className="quiz-feedback">
-            <p
-              className={
-                lastAnswer.correct
-                  ? "quiz-feedback__status quiz-feedback__status--correct"
-                  : "quiz-feedback__status quiz-feedback__status--incorrect"
-              }
-            >
-              {lastAnswer.correct ? (
-                <CheckCircle2 aria-hidden="true" />
-              ) : (
-                <XCircle aria-hidden="true" />
-              )}
-              {lastAnswer.correct ? "Correct" : "Incorrect"}
-            </p>
-            <p className="quiz-feedback__explanation">{question.explanation}</p>
-            <a
-              className="quiz-feedback__link"
-              href={question.mdnUrl}
-              target="_blank"
-              rel="noopener"
-            >
-              Read on MDN
-              <ExternalLink aria-hidden="true" />
-              <span className="visually-hidden"> (opens in new tab)</span>
-            </a>
-            <Button onPress={onAdvance}>{isLastQuestion ? "See results" : "Next question"}</Button>
-          </div>
-        ) : null}
+        {/*
+          Stays mounted across phases (rather than only when phase is
+          "feedback") so screen readers reliably announce the update —
+          some only pick up content changes inside an already-mounted
+          live region, not one that appears alongside its content.
+        */}
+        <div aria-live="polite" className="quiz-feedback">
+          {phase === "feedback" && lastAnswer ? (
+            <>
+              <p
+                className={
+                  lastAnswer.correct
+                    ? "quiz-feedback__status quiz-feedback__status--correct"
+                    : "quiz-feedback__status quiz-feedback__status--incorrect"
+                }
+              >
+                {lastAnswer.correct ? (
+                  <CheckCircle2 aria-hidden="true" />
+                ) : (
+                  <XCircle aria-hidden="true" />
+                )}
+                {lastAnswer.correct ? "Correct" : "Incorrect"}
+              </p>
+              <p className="quiz-feedback__explanation">{question.explanation}</p>
+              <a
+                className="quiz-feedback__link"
+                href={question.mdnUrl}
+                target="_blank"
+                rel="noopener"
+              >
+                Read on MDN
+                <ExternalLink aria-hidden="true" />
+                <span className="visually-hidden"> (opens in new tab)</span>
+              </a>
+              <Button onPress={onAdvance}>
+                {isLastQuestion ? "See results" : "Next question"}
+              </Button>
+            </>
+          ) : null}
+        </div>
       </CardContent>
     </Card>
   );

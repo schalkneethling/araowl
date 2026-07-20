@@ -34,6 +34,11 @@ export class IdbScoreStore implements ScoreStore {
       terminated: () => {
         this.dbPromise = undefined;
       },
+    }).catch((error: unknown) => {
+      // A failed open must not be cached forever — clear it so the next
+      // call retries instead of replaying the same rejection indefinitely.
+      this.dbPromise = undefined;
+      throw error;
     });
     return this.dbPromise;
   }

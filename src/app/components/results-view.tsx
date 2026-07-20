@@ -32,7 +32,12 @@ export function ResultsView({ quiz, store, onSaved, onRestart }: ResultsViewProp
 
     const anonUserId = getAnonUserId(localStorage);
     const attempt = buildAttempt(quiz, { anonUserId, finishedAt: new Date().toISOString() });
-    void store.saveAttempt(attempt).then(onSaved);
+    void store
+      .saveAttempt(attempt)
+      .then(onSaved)
+      .catch((error: unknown) => {
+        console.error("Failed to persist quiz attempt", error);
+      });
   }, [quiz, store, onSaved]);
 
   return (

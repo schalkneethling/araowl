@@ -16,9 +16,15 @@ export function ScoreHistory({ store, refreshKey }: ScoreHistoryProps) {
 
   useEffect(() => {
     let cancelled = false;
-    void store.listAttempts().then((result) => {
-      if (!cancelled) setAttempts(result);
-    });
+    void store.listAttempts().then(
+      (result) => {
+        if (!cancelled) setAttempts(result);
+      },
+      (error: unknown) => {
+        console.error("Failed to load quiz history", error);
+        if (!cancelled) setAttempts([]);
+      },
+    );
     return () => {
       cancelled = true;
     };
