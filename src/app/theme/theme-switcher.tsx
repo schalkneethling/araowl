@@ -1,5 +1,5 @@
 import { Moon, Monitor, Sun } from "lucide-react";
-import { useEffect, useState } from "react";
+import { type CSSProperties, useEffect, useState } from "react";
 import { Radio, RadioGroup } from "react-aria-components";
 import {
   applyTheme,
@@ -13,8 +13,8 @@ const THEME_OPTIONS: ReadonlyArray<{
   label: string;
   Icon: typeof Sun;
 }> = [
-  { value: "light", label: "Light", Icon: Sun },
   { value: "system", label: "System", Icon: Monitor },
+  { value: "light", label: "Light", Icon: Sun },
   { value: "dark", label: "Dark", Icon: Moon },
 ];
 
@@ -37,6 +37,8 @@ export function ThemeSwitcher() {
     setStoredThemePreference(localStorage, preference);
   }, [preference]);
 
+  const selectedIndex = THEME_OPTIONS.findIndex((option) => option.value === preference);
+
   return (
     <RadioGroup
       aria-label="Theme"
@@ -45,6 +47,11 @@ export function ThemeSwitcher() {
       orientation="horizontal"
       className="theme-switcher"
     >
+      <span
+        aria-hidden="true"
+        className="theme-switcher__indicator"
+        style={{ "--theme-switcher-index": selectedIndex } as CSSProperties}
+      />
       {THEME_OPTIONS.map(({ value, label, Icon }) => (
         <Radio key={value} value={value} className="theme-switcher__option">
           <Icon aria-hidden="true" />

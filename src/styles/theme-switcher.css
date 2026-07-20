@@ -1,28 +1,59 @@
 .theme-switcher {
+  --theme-switcher-option-size: 2.5rem;
+  --theme-switcher-gap: var(--size-4);
+
   background-color: var(--color-surface-sunken);
   border-radius: var(--radius-lg);
   display: inline-flex;
-  gap: var(--size-4);
-  padding: var(--size-4);
+  gap: var(--theme-switcher-gap);
+  padding: var(--theme-switcher-gap);
+  position: relative;
+}
+
+/* Slides behind whichever option is selected, so the change in selection
+   reads as motion rather than an instant color swap. */
+.theme-switcher__indicator {
+  background-color: var(--color-primary);
+  border-radius: var(--radius-md);
+  inline-size: var(--theme-switcher-option-size);
+  inset-block: var(--theme-switcher-gap);
+  inset-inline-start: var(--theme-switcher-gap);
+  position: absolute;
+  transform: translateX(
+    calc(
+      var(--theme-switcher-index, 0) *
+        (var(--theme-switcher-option-size) + var(--theme-switcher-gap))
+    )
+  );
+  transition: transform 0.2s ease-in-out;
+  z-index: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-switcher__indicator {
+    transition: none;
+  }
 }
 
 .theme-switcher__option {
   align-items: center;
+  block-size: var(--theme-switcher-option-size);
   border-radius: var(--radius-md);
   cursor: pointer;
   display: inline-flex;
+  inline-size: var(--theme-switcher-option-size);
   justify-content: center;
   outline: none;
-  padding: var(--size-8);
+  position: relative;
   transition: background-color 0.15s ease-in-out;
+  z-index: 1;
 }
 
-.theme-switcher__option[data-hovered] {
+.theme-switcher__option[data-hovered]:not([data-selected]) {
   background-color: var(--color-surface);
 }
 
 .theme-switcher__option[data-selected] {
-  background-color: var(--color-primary);
   color: var(--color-primary-foreground);
 }
 

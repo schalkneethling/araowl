@@ -35,19 +35,24 @@ test.describe("theme switcher", () => {
   });
 
   test("keyboard: arrow keys move between options and update data-theme", async ({ page }) => {
+    // Rendered order is System, Light, Dark.
     await page.getByRole("radio", { name: "System" }).focus();
+
+    await page.keyboard.press("ArrowRight");
+    await expect(page.getByRole("radio", { name: "Light" })).toBeChecked();
+    expect(await getDataTheme(page)).toBe("light");
 
     await page.keyboard.press("ArrowRight");
     await expect(page.getByRole("radio", { name: "Dark" })).toBeChecked();
     expect(await getDataTheme(page)).toBe("dark");
 
     await page.keyboard.press("ArrowLeft");
-    await expect(page.getByRole("radio", { name: "System" })).toBeChecked();
-    expect(await getDataTheme(page)).toBeNull();
-
-    await page.keyboard.press("ArrowLeft");
     await expect(page.getByRole("radio", { name: "Light" })).toBeChecked();
     expect(await getDataTheme(page)).toBe("light");
+
+    await page.keyboard.press("ArrowLeft");
+    await expect(page.getByRole("radio", { name: "System" })).toBeChecked();
+    expect(await getDataTheme(page)).toBeNull();
   });
 
   test("applies a stored preference before first paint (no FOUC)", async ({ page }) => {
