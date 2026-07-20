@@ -137,6 +137,43 @@ test.describe("quiz island", () => {
     await expect(items.nth(1)).toContainText(`${TOTAL_QUESTIONS} / ${TOTAL_QUESTIONS}`);
   });
 
+  test("lays out the four options as separate, full-width, non-overlapping rows", async ({
+    page,
+  }) => {
+    await startQuiz(page);
+
+    const group = page.getByRole("radiogroup");
+    const groupBox = await group.boundingBox();
+    if (!groupBox) throw new Error("radiogroup has no bounding box");
+
+    // Measure the rendered option rows (the labels); the role=radio inputs
+    // themselves are visually hidden by React Aria.
+    const rows = group.locator('[data-slot="radio-group-item"]');
+    await expect(rows).toHaveCount(4);
+
+    const boxes = [];
+    for (let index = 0; index < 4; index++) {
+      const box = await rows.nth(index).boundingBox();
+      if (!box) throw new Error(`option row ${index} has no bounding box`);
+      boxes.push(box);
+    }
+
+    for (const box of boxes) {
+      // Real rows, not text squeezed into a 16px circle.
+      expect(box.height).toBeGreaterThanOrEqual(24);
+      expect(box.width).toBeGreaterThan(groupBox.width * 0.5);
+    }
+
+    // No vertical overlap: each row starts after the previous one ends.
+    const sorted = boxes.toSorted((a, b) => a.y - b.y);
+    for (let index = 1; index < sorted.length; index++) {
+      const previous = sorted[index - 1];
+      const currentRow = sorted[index];
+      if (!previous || !currentRow) throw new Error("missing bounding box");
+      expect(currentRow.y).toBeGreaterThanOrEqual(previous.y + previous.height - 1);
+    }
+  });
+
   test("hints stay revealed, exhaust their button, and reset per question", async ({ page }) => {
     const [first, second] = questions;
     if (!first || !second) throw new Error("quiz manifest must have at least 2 questions");
