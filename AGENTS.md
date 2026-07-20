@@ -41,3 +41,7 @@ There is no "primary" platform or input method for AraOwl. Mobile, tablet, and d
 
 - Always use curly braces around `if`/`else`/`for`/`while` bodies, even single-statement ones. Enforced via `curly: "error"` in `.oxlintrc.json` — don't downgrade this rule.
 - Prefer `type` over `interface` for plain data shapes (e.g. component props). Reserve `interface` for contracts a class implements (e.g. `ScoreStore`, `QuizSource`) or that benefit from declaration merging.
+
+## Pull request scope
+
+Read `PR.md` before scoping a phase into issues/tasks, before starting a new implementation, and again mid-implementation if the diff is growing beyond what was planned. It covers how to size and split PRs so each one answers a single reviewable question — apply it when planning how to break up a phase's work, when a task starts pulling in unrelated concerns (e.g. schema + generation + UI all in one slice), or when deciding whether to open a follow-up issue instead of expanding the current PR.
