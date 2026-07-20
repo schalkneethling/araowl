@@ -12,4 +12,12 @@ test.describe("app shell", () => {
     await expect(page.locator("#theme-root")).toBeAttached();
     await expect(page.locator("#quiz-root")).toBeAttached();
   });
+
+  test("skip link moves focus to the main content", async ({ page }) => {
+    await page.goto("/");
+
+    await page.getByRole("link", { name: "Skip to main content" }).press("Enter");
+
+    await expect(page.locator("#main-content")).toBeFocused();
+  });
 });

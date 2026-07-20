@@ -7,6 +7,9 @@
     "perf": "warn",
     "style": "warn"
   },
+  "rules": {
+    "curly": "error"
+  },
   "env": {
     "browser": true,
     "es2024": true

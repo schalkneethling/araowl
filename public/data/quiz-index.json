@@ -1,0 +1,187 @@
+{
+  "version": 1,
+  "generatedAt": "2026-07-19T17:58:24.000Z",
+  "source": "bundled",
+  "questions": [
+    {
+      "id": "starter-html-01",
+      "topic": "html",
+      "question": "A page has two <script defer> tags and one <script async> tag, each pointing to a different file. Which statement about their execution order is accurate?",
+      "options": [
+        "The async script always runs first because it downloads in parallel with parsing.",
+        "All three scripts execute in the exact order they appear in the HTML, regardless of the async attribute.",
+        "The async script waits until both defer scripts have finished before running.",
+        "The two defer scripts run in the order they appear in the document; the async script may run before, between, or after them."
+      ],
+      "answerIndex": 3,
+      "hints": [
+        "Think about what defer guarantees that async does not.",
+        "defer preserves document order and runs after parsing; async has no ordering guarantee relative to other scripts."
+      ],
+      "explanation": "Scripts with defer execute in the order they appear in the document, after HTML parsing completes and before DOMContentLoaded. Scripts with async run as soon as they've downloaded, with no guaranteed order relative to other scripts.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script"
+    },
+    {
+      "id": "starter-html-02",
+      "topic": "html",
+      "question": "You open a <dialog> with showModal(), and none of its descendants have the autofocus attribute. Where does keyboard focus go?",
+      "options": [
+        "Focus stays on whatever element had focus before the dialog opened.",
+        "Focus moves to the first focusable element nested inside the dialog.",
+        "Focus moves to the <body> element.",
+        "Focus moves to the dialog's close button, which is created automatically."
+      ],
+      "answerIndex": 1,
+      "hints": [
+        "showModal() always moves focus somewhere inside the dialog by default.",
+        "Without an explicit autofocus target, the browser picks a default based on the dialog's contents."
+      ],
+      "explanation": "When showModal() opens a <dialog> without an autofocus descendant, focus is placed on the first nested focusable element inside the dialog. Adding autofocus lets you override this default.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog"
+    },
+    {
+      "id": "starter-css-01",
+      "topic": "css",
+      "question": "Which containers does the CSS gap shorthand actually apply to?",
+      "options": [
+        "Multi-column, flex, and grid containers",
+        "Grid containers only",
+        "Flex and block containers, but not grid",
+        "Only elements with display: flow-root"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "gap isn't limited to just one layout mode.",
+        "It works anywhere you have rows/columns to space out: multicol, flexbox, and grid."
+      ],
+      "explanation": "The gap shorthand sets row and column gaps in multi-column, flex, and grid containers. A common misconception is that it only works with CSS Grid, but it applies to flex containers too.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/gap"
+    },
+    {
+      "id": "starter-css-02",
+      "topic": "css",
+      "question": "You set z-index: 10 on a <div> that has no position property set (so it stays position: static) and is not a flex or grid item. What happens?",
+      "options": [
+        "The div is stacked above all its unpositioned siblings.",
+        "The browser throws a console warning and ignores the whole rule block.",
+        "The div creates a new stacking context but keeps its default paint order.",
+        "The z-index value has no effect, because it only applies to positioned elements or flex/grid items."
+      ],
+      "answerIndex": 3,
+      "hints": [
+        "z-index has a prerequisite before it does anything.",
+        "It only kicks in for elements that are positioned, or that are flex/grid items."
+      ],
+      "explanation": "z-index sets the stacking order of a positioned element (or a flex/grid item) and its descendants. On a statically positioned, non-flex/grid-item element, z-index is simply ignored.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/z-index"
+    },
+    {
+      "id": "starter-javascript-01",
+      "topic": "javascript",
+      "question": "You call structuredClone() on an object that contains a function property. What happens?",
+      "options": [
+        "The function is silently dropped from the clone.",
+        "structuredClone() throws a DataCloneError.",
+        "The function is copied by reference into the clone.",
+        "The function is serialized to its source code string."
+      ],
+      "answerIndex": 1,
+      "hints": [
+        "Not every JavaScript value is 'structured-clonable'.",
+        "Values that can't be serialized by the structured clone algorithm cause an exception rather than being silently skipped."
+      ],
+      "explanation": "structuredClone() throws a DataCloneError DOMException when asked to clone a value that isn't serializable. Function objects (and DOM nodes) cannot be duplicated by the structured clone algorithm.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/API/Window/structuredClone"
+    },
+    {
+      "id": "starter-javascript-02",
+      "topic": "javascript",
+      "question": "In the expression a?.b.c.d, if a is null, what happens to the rest of the chain (.c.d)?",
+      "options": [
+        "JavaScript still evaluates .c.d and throws because b is undefined.",
+        "A SyntaxError is thrown because chaining after ?. requires another ?. at each step.",
+        "The entire expression short-circuits and evaluates to undefined without evaluating .c or .d.",
+        "Only .b is skipped; .c.d is evaluated against undefined and returns null."
+      ],
+      "answerIndex": 2,
+      "hints": [
+        "Optional chaining doesn't just protect the one property access right after it.",
+        "Once the short-circuit condition is hit, the whole rest of the chain is skipped, not just the next property."
+      ],
+      "explanation": "If the value before ?. is null or undefined, the entire chained expression short-circuits and evaluates to undefined immediately. None of the remaining property accesses are evaluated, and no error is thrown.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining"
+    },
+    {
+      "id": "starter-web-apis-01",
+      "topic": "web-apis",
+      "question": "Relative to the actual moment a target element's visibility crosses a threshold, when does an IntersectionObserver callback run?",
+      "options": [
+        "Asynchronously, on the main thread, some time after the intersection change.",
+        "Synchronously, in the same task that caused the layout change.",
+        "On a separate worker thread, so it never blocks the main thread.",
+        "Only once, the first time observe() is called, regardless of later changes."
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "This is part of why IntersectionObserver is considered cheaper than scroll-event polling.",
+        "The callback isn't invoked in the same synchronous flow as the layout/scroll change; the API is inherently asynchronous."
+      ],
+      "explanation": "The Intersection Observer API asynchronously observes changes in the intersection of a target element with an ancestor element or the viewport, so callbacks fire on the main thread but not synchronously with the layout change itself.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver"
+    },
+    {
+      "id": "starter-web-apis-02",
+      "topic": "web-apis",
+      "question": "You write new FormData(myFormElement), where myFormElement is a reference to an existing <form>. What ends up in the FormData object?",
+      "options": [
+        "Nothing — FormData must be built manually with append() calls.",
+        "Only the form's text <input> values; file inputs are skipped.",
+        "Only fields that have a name and are currently focused.",
+        "The form's current field values, including file input contents."
+      ],
+      "answerIndex": 3,
+      "hints": [
+        "The FormData constructor accepts a form element as an optional argument.",
+        "When given a <form>, it captures the submittable fields' current values as they'd be sent on submission — that includes files."
+      ],
+      "explanation": "Passing a <form> element to the FormData() constructor captures the current values of the form's fields, including file input content, exactly as they'd be encoded for a multipart/form-data submission.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData"
+    },
+    {
+      "id": "starter-accessibility-01",
+      "topic": "accessibility",
+      "question": "An element has both an aria-label attribute and an aria-labelledby attribute pointing to visible text elsewhere on the page. Which one determines the accessible name?",
+      "options": [
+        "aria-label always wins because it's simpler and more direct.",
+        "Whichever attribute was added to the DOM more recently wins.",
+        "aria-labelledby takes precedence over aria-label and even the element's own visible text.",
+        "Assistive technologies concatenate both into a single accessible name."
+      ],
+      "answerIndex": 2,
+      "hints": [
+        "The two attributes aren't equal in priority when both are present.",
+        "One of them is documented as having the highest precedence in accessible name computation, overriding the other and even the element's contents."
+      ],
+      "explanation": "aria-labelledby has the highest precedence when browsers calculate the accessible name. If both attributes are present, aria-labelledby is used, overriding aria-label and even the element's own visible text.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-labelledby"
+    },
+    {
+      "id": "starter-accessibility-02",
+      "topic": "accessibility",
+      "question": "A user clicks a button with their mouse, and a different user tabs to the same button with the keyboard. Why might the button show a focus ring only for the keyboard user?",
+      "options": [
+        "It's a bug — :focus applies identically regardless of input method.",
+        "Browsers apply :focus-visible based on a heuristic that decides whether a focus indicator should be shown, typically favoring keyboard interaction over mouse clicks.",
+        "Focus rings are controlled entirely by the tabindex value, not the input device.",
+        ":focus-visible only exists in browser DevTools and has no effect on real users."
+      ],
+      "answerIndex": 1,
+      "hints": [
+        "There's a CSS pseudo-class specifically designed to distinguish 'focus that should be visibly indicated' from focus in general.",
+        ":focus-visible matches when the user agent's heuristic determines a focus indicator should be shown — this commonly differs for keyboard vs. pointer interaction."
+      ],
+      "explanation": ":focus-visible applies while an element matches :focus and the user agent determines, via heuristics, that a focus indicator should be shown, commonly leading browsers to show a focus ring for keyboard interaction but not for mouse clicks.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:focus-visible"
+    }
+  ]
+}
