@@ -72,11 +72,17 @@
 /* Feedback */
 
 .quiz-feedback {
-  border: var(--border-primary);
   border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
   gap: var(--size-12);
+}
+
+/* The container stays mounted across quiz phases so screen readers reliably
+   announce feedback updates (see question-card.tsx); style it as a visible
+   card only once it actually has feedback content to show. */
+.quiz-feedback:not(:empty) {
+  border: var(--border-primary);
   padding: var(--size-16);
 }
 
