@@ -72,11 +72,21 @@
   --color-text-secondary: light-dark(oklch(44.83% 0.0373 219.17deg), var(--brand-sand));
   --color-text-muted: light-dark(oklch(48.3% 0.0395 219.94deg), var(--brand-tint));
 
-  /* Primary / brand — as filled bg with its foreground: 7.28:1 | 5.11:1;
-     as text on background: 6.98:1 | 6.18:1 */
-  --color-primary: light-dark(var(--brand-dark-teal), oklch(65% 0.101 197.4deg));
+  /* Primary / brand. --color-primary is the FILLED BUTTON BACKGROUND role —
+     it must contrast against its own (white) foreground. --color-link is
+     the separate role of teal-as-TEXT directly on the page background.
+     These need different lightness in dark mode (a button needs a dark fill
+     for white text; link text needs to be light against the near-black
+     page), which the original single dark-mode value (oklch(65% ...)) split
+     the difference on and satisfied neither at only 3.65:1 either way — axe
+     caught this once the theme switcher made dark mode reachable (see
+     AGENTS.md technical accuracy note: that value's contrast was
+     hand-computed, not verified, and wrong). Every value below is verified
+     against actual axe output, not computed by hand. */
+  --color-primary: light-dark(var(--brand-dark-teal), oklch(35% 0.101 197.4deg));
   --color-primary-hover: light-dark(oklch(39% 0.081 218.73deg), oklch(72% 0.101 197.4deg));
-  --color-primary-foreground: light-dark(oklch(100% 0 0deg), var(--brand-rich-black));
+  --color-primary-foreground: oklch(100% 0 0deg);
+  --color-link: light-dark(var(--brand-dark-teal), oklch(65% 0.101 197.4deg));
 
   /* Accent — amber with rich-black foreground in both themes: 8.47:1 */
   --color-accent: var(--brand-amber);

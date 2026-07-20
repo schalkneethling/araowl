@@ -64,7 +64,11 @@ export async function completeQuiz(
     await expect(page.getByRole("heading", { name: question.question })).toBeVisible();
 
     const chosen = pickIndex(question);
-    await page.getByRole("radio", { name: question.options[chosen] ?? "" }).press("Space");
+    // Scoped to #quiz-root: the header's theme switcher is also a radiogroup.
+    await page
+      .locator("#quiz-root")
+      .getByRole("radio", { name: question.options[chosen] ?? "" })
+      .press("Space");
     await page.getByRole("button", { name: "Check answer" }).press("Enter");
 
     const isLast = index === questions.length - 1;

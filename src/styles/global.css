@@ -27,6 +27,7 @@
 @import "./tokens.css" layer(tokens);
 @import "./typography.css" layer(typography);
 @import "./quiz.css" layer(components);
+@import "./theme-switcher.css" layer(components);
 @import "./utils.css" layer(utils);
 
 /* Kept for shadcn component utilities; our own CSS relies on
@@ -259,7 +260,7 @@
   }
 
   .site-footer__content a {
-    color: var(--color-primary);
+    color: var(--color-link);
   }
 
   .site-footer__links {

@@ -1,11 +1,18 @@
 import "./styles/global.css";
 
 import { QuizApp } from "@/app/quiz-app";
+import { ThemeSwitcher } from "@/app/theme/theme-switcher";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-// React islands (theme switcher, quiz app, etc.) mount into their respective
-// #theme-root / #quiz-root containers in later phases.
+const themeRoot = document.getElementById("theme-root");
+if (themeRoot) {
+  createRoot(themeRoot).render(
+    <StrictMode>
+      <ThemeSwitcher />
+    </StrictMode>,
+  );
+}
 
 const quizRoot = document.getElementById("quiz-root");
 if (quizRoot) {

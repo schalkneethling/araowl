@@ -47,7 +47,8 @@ test.describe("quiz island", () => {
       }
 
       // Space selects the first option; each ArrowDown moves the selection on.
-      const radios = page.getByRole("radio");
+      // Scoped to #quiz-root: the header's theme switcher is also a radiogroup.
+      const radios = page.locator("#quiz-root").getByRole("radio");
       await expect(radios).toHaveCount(4);
       const chosen = index % 4;
       await radios.first().press("Space");
@@ -145,7 +146,8 @@ test.describe("quiz island", () => {
   }) => {
     await startQuiz(page);
 
-    const group = page.getByRole("radiogroup");
+    // Scoped to #quiz-root: the header's theme switcher is also a radiogroup.
+    const group = page.locator("#quiz-root").getByRole("radiogroup");
     const groupBox = await group.boundingBox();
     if (!groupBox) {
       throw new Error("radiogroup has no bounding box");
@@ -208,7 +210,7 @@ test.describe("quiz island", () => {
     }
 
     // Hints stay visible through the feedback phase.
-    await page.getByRole("radio").first().press("Space");
+    await page.locator("#quiz-root").getByRole("radio").first().press("Space");
     await page.getByRole("button", { name: "Check answer" }).press("Enter");
     for (const hint of first.hints) {
       await expect(page.getByText(hint)).toBeVisible();
