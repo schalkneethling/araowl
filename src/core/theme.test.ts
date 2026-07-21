@@ -11,6 +11,17 @@ function makeStorage(initial: Record<string, string> = {}) {
   };
 }
 
+function makeThrowingStorage() {
+  return {
+    getItem: () => {
+      throw new Error("blocked");
+    },
+    setItem: () => {
+      throw new Error("blocked");
+    },
+  };
+}
+
 function makeTarget() {
   return {
     setAttribute: vi.fn<(name: string, value: string) => void>(),
@@ -37,6 +48,10 @@ describe("getStoredThemePreference", () => {
       "system",
     );
   });
+
+  it("falls back to system when storage access throws", () => {
+    expect(getStoredThemePreference(makeThrowingStorage())).toBe("system");
+  });
 });
 
 describe("setStoredThemePreference", () => {
@@ -44,6 +59,10 @@ describe("setStoredThemePreference", () => {
     const storage = makeStorage();
     setStoredThemePreference(storage, "dark");
     expect(getStoredThemePreference(storage)).toBe("dark");
+  });
+
+  it("does not throw when storage access throws", () => {
+    expect(() => setStoredThemePreference(makeThrowingStorage(), "dark")).not.toThrow();
   });
 });
 

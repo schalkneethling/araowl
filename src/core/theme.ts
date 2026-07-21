@@ -15,12 +15,24 @@ type ThemeStorage = Pick<Storage, "getItem" | "setItem">;
  * visitor or an unrecognized/corrupted stored value.
  */
 export function getStoredThemePreference(storage: ThemeStorage): ThemePreference {
-  const stored = storage.getItem(THEME_PREFERENCE_KEY);
-  return isThemePreference(stored) ? stored : "system";
+  try {
+    const stored = storage.getItem(THEME_PREFERENCE_KEY);
+    return isThemePreference(stored) ? stored : "system";
+  } catch {
+    // Storage access blocked (strict privacy settings, etc.) — fall back to
+    // "system" rather than throwing during render.
+    return "system";
+  }
 }
 
+/** Best-effort: a failed write (quota, blocked storage) shouldn't stop the
+ * theme from being applied for this session, so this never throws. */
 export function setStoredThemePreference(storage: ThemeStorage, preference: ThemePreference): void {
-  storage.setItem(THEME_PREFERENCE_KEY, preference);
+  try {
+    storage.setItem(THEME_PREFERENCE_KEY, preference);
+  } catch {
+    // Ignored — see doc comment above.
+  }
 }
 
 type ThemeTarget = Pick<HTMLElement, "setAttribute" | "removeAttribute">;

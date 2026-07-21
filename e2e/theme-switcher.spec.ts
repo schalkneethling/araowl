@@ -62,11 +62,17 @@ test.describe("theme switcher", () => {
       localStorage.setItem("araowl:theme-preference", "dark");
     });
 
-    await page.goto("/");
+    // Block the app bundle so React never mounts. Without this, the
+    // assertion below would pass even if theme-init.js were completely
+    // broken — the ThemeSwitcher's own effect would eventually set the same
+    // data-theme once it mounted, since page.goto by default waits for the
+    // full "load" event. Aborting the bundle isolates theme-init.js (a
+    // render-blocking classic script, not a module) as the only thing that
+    // could have set the attribute.
+    await page.route("**/assets/*.js", (route) => route.abort());
 
-    // theme-init.js is a render-blocking classic script, so data-theme must
-    // already be set the moment the document is available — not merely by
-    // the time React has hydrated the switcher.
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+
     expect(await getDataTheme(page)).toBe("dark");
   });
 });
