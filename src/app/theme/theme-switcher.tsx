@@ -1,12 +1,8 @@
 import { Moon, Monitor, Sun } from "lucide-react";
-import { type CSSProperties, useEffect, useState } from "react";
+import type { CSSProperties } from "react";
 import { Radio, RadioGroup } from "react-aria-components";
-import {
-  applyTheme,
-  getStoredThemePreference,
-  setStoredThemePreference,
-  type ThemePreference,
-} from "@/core/theme";
+import type { ThemePreference } from "@/core/theme";
+import { useThemePreference } from "@/app/theme/use-theme-preference";
 
 const THEME_OPTIONS: ReadonlyArray<{
   value: ThemePreference;
@@ -28,15 +24,7 @@ const THEME_OPTIONS: ReadonlyArray<{
  * circle-and-label rows used for quiz answers) to suit the header.
  */
 export function ThemeSwitcher() {
-  const [preference, setPreference] = useState<ThemePreference>(() =>
-    getStoredThemePreference(localStorage),
-  );
-
-  useEffect(() => {
-    applyTheme(preference, document.documentElement);
-    setStoredThemePreference(localStorage, preference);
-  }, [preference]);
-
+  const [preference, setPreference] = useThemePreference();
   const selectedIndex = THEME_OPTIONS.findIndex((option) => option.value === preference);
 
   return (

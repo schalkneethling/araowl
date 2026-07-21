@@ -34,30 +34,18 @@ test.describe("theme switcher", () => {
     await expect(page.getByRole("radio", { name: "System" })).toBeChecked();
   });
 
-  test("keyboard: arrow keys move between options and update data-theme", async ({ page }) => {
-    // Rendered order is System, Light, Dark.
-    await page.getByRole("radio", { name: "System" }).focus();
+  // No keyboard-navigation test here: arrow-key movement between options is
+  // React Aria's implemented ARIA radiogroup pattern (the platform's job,
+  // already covered by its own test suite), and the app-specific behavior it
+  // would otherwise exercise — selecting an option applies the theme — is
+  // already covered by the click-based test above.
 
-    await page.keyboard.press("ArrowRight");
-    await expect(page.getByRole("radio", { name: "Light" })).toBeChecked();
-    expect(await getDataTheme(page)).toBe("light");
-
-    await page.keyboard.press("ArrowRight");
-    await expect(page.getByRole("radio", { name: "Dark" })).toBeChecked();
-    expect(await getDataTheme(page)).toBe("dark");
-
-    await page.keyboard.press("ArrowLeft");
-    await expect(page.getByRole("radio", { name: "Light" })).toBeChecked();
-    expect(await getDataTheme(page)).toBe("light");
-
-    await page.keyboard.press("ArrowLeft");
-    await expect(page.getByRole("radio", { name: "System" })).toBeChecked();
-    expect(await getDataTheme(page)).toBeNull();
-  });
-
-  test("applies a stored preference before first paint (no FOUC)", async ({ page }) => {
-    // Simulate a returning visitor: seed the preference the way the app
-    // itself persists it, before any app script runs.
+  test("theme-init.js applies a stored preference independent of the app bundle", async ({
+    page,
+  }) => {
+    // This proves theme-init.js's own logic is correct in isolation — not
+    // that there is no visible flash, which would require capturing paint
+    // timing, not just reading the attribute's final value.
     await page.addInitScript(() => {
       localStorage.setItem("araowl:theme-preference", "dark");
     });
