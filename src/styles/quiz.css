@@ -66,6 +66,13 @@
   transition: inline-size 0.2s ease-in-out;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .quiz-progress__bar::-webkit-progress-value,
+  .quiz-progress__bar::-moz-progress-bar {
+    transition: none;
+  }
+}
+
 .quiz-progress__label {
   color: var(--color-text-secondary);
 }
