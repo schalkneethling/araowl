@@ -334,6 +334,12 @@ importers:
       vite-plus:
         specifier: 'catalog:'
         version: 0.2.2(@types/node@26.1.1)(@voidzero-dev/vite-plus-core@0.2.2(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3))(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)
+      workbox-build:
+        specifier: ^7.4.1
+        version: 7.4.1(supports-color@10.2.2)
+      workbox-window:
+        specifier: ^7.4.1
+        version: 7.4.1
       wrangler:
         specifier: ^4.112.0
         version: 4.112.0(@cloudflare/workers-types@5.20260718.1)
