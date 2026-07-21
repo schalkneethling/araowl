@@ -49,13 +49,19 @@
 }
 
 .quiz-progress__bar::-webkit-progress-value {
-  background-color: var(--color-primary);
+  /* --color-link, not --color-primary: the fill needs to stand out against
+     the (dark) track/page, the same role as teal link text, not the
+     dark-for-button-contrast role --color-primary's dark-mode value has. */
+  background-color: var(--color-link);
   border-radius: var(--radius-sm);
   transition: inline-size 0.2s ease-in-out;
 }
 
 .quiz-progress__bar::-moz-progress-bar {
-  background-color: var(--color-primary);
+  /* --color-link, not --color-primary: the fill needs to stand out against
+     the (dark) track/page, the same role as teal link text, not the
+     dark-for-button-contrast role --color-primary's dark-mode value has. */
+  background-color: var(--color-link);
   border-radius: var(--radius-sm);
   transition: inline-size 0.2s ease-in-out;
 }
