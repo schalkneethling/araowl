@@ -66,6 +66,13 @@
   transition: inline-size 0.2s ease-in-out;
 }
 
+/* Deliberate exception to the global reduced-motion reset in global.css:
+   verified the universal `*` selector does reach ::-webkit-progress-value in
+   Chromium, but WebKit's getComputedStyle returns nothing at all for this
+   pseudo-element (confirmed empirically — every property comes back empty,
+   not just transition-duration), so its real behavior can't be verified.
+   Keeping an explicit rule here is the safe choice for an accessibility
+   guarantee rather than trusting an unverifiable cross-browser assumption. */
 @media (prefers-reduced-motion: reduce) {
   .quiz-progress__bar::-webkit-progress-value,
   .quiz-progress__bar::-moz-progress-bar {

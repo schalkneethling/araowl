@@ -29,12 +29,6 @@
   z-index: 0;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .theme-switcher__indicator {
-    transition: none;
-  }
-}
-
 .theme-switcher__option {
   align-items: center;
   block-size: var(--theme-switcher-option-size);

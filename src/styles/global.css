@@ -157,6 +157,22 @@
     outline: 2px solid var(--color-focus-ring);
     outline-offset: 2px;
   }
+
+  /* Global reduced-motion reset: covers every animated/transitioned element
+     app-wide, so individual components don't each need their own
+     prefers-reduced-motion override. Near-zero duration (not `none`)
+     preserves transitionend/animationend firing for any JS that depends on
+     it, while making the motion imperceptible. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 
 @layer layout {
@@ -198,12 +214,6 @@
     opacity: 1;
     text-decoration: none;
     z-index: var(--skip-links-nav-z-index);
-  }
-
-  @media screen and (prefers-reduced-motion: reduce) {
-    :where(.skip-links-nav) a {
-      transition: none;
-    }
   }
 
   .site-header {
