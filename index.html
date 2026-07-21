@@ -8,6 +8,9 @@
       content="Test and sharpen your web platform knowledge with AraOwl — quizzes built from MDN Web Docs that work offline, plus custom AI quizzes on the topics you choose."
     />
     <title>AraOwl — Test your web knowledge</title>
+    <!-- Blocking classic script (not type="module", which defers) so the
+         stored theme preference is applied before first paint. -->
+    <script src="/theme-init.js"></script>
   </head>
   <body>
     <nav id="nav-access" aria-labelledby="skip-links-nav-label">
@@ -24,6 +27,8 @@
         <svg
           class="site-header__brand-mark"
           viewBox="0 0 32 32"
+          width="32"
+          height="32"
           aria-hidden="true"
           focusable="false"
         >

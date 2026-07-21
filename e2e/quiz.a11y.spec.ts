@@ -121,7 +121,8 @@ test("active question with hints and feedback has no violations", async ({
     await expect(page.getByText(hint)).toBeVisible();
   }
 
-  await page.getByRole("radio").first().press("Space");
+  // Scoped to #quiz-root: the header's theme switcher is also a radiogroup.
+  await page.locator("#quiz-root").getByRole("radio").first().press("Space");
   await page.getByRole("button", { name: "Check answer" }).press("Enter");
   await expect(page.getByText(/^(Correct|Incorrect)$/)).toBeVisible();
 

@@ -30,10 +30,54 @@
   gap: var(--size-8);
 }
 
+/* accent-color alone isn't reliably applied to <progress> across browsers
+   (verified: Chromium ignores it here despite reporting the correct
+   computed value), so the fill/track are styled directly instead. */
 .quiz-progress__bar {
+  appearance: none;
+  background-color: var(--color-surface-sunken);
   block-size: var(--size-12);
+  border: none;
   border-radius: var(--radius-sm);
   inline-size: 100%;
+  overflow: hidden;
+}
+
+.quiz-progress__bar::-webkit-progress-bar {
+  background-color: var(--color-surface-sunken);
+  border-radius: var(--radius-sm);
+}
+
+.quiz-progress__bar::-webkit-progress-value {
+  /* --color-link, not --color-primary: the fill needs to stand out against
+     the (dark) track/page, the same role as teal link text, not the
+     dark-for-button-contrast role --color-primary's dark-mode value has. */
+  background-color: var(--color-link);
+  border-radius: var(--radius-sm);
+  transition: inline-size 0.2s ease-in-out;
+}
+
+.quiz-progress__bar::-moz-progress-bar {
+  /* --color-link, not --color-primary: the fill needs to stand out against
+     the (dark) track/page, the same role as teal link text, not the
+     dark-for-button-contrast role --color-primary's dark-mode value has. */
+  background-color: var(--color-link);
+  border-radius: var(--radius-sm);
+  transition: inline-size 0.2s ease-in-out;
+}
+
+/* Deliberate exception to the global reduced-motion reset in global.css:
+   verified the universal `*` selector does reach ::-webkit-progress-value in
+   Chromium, but WebKit's getComputedStyle returns nothing at all for this
+   pseudo-element (confirmed empirically — every property comes back empty,
+   not just transition-duration), so its real behavior can't be verified.
+   Keeping an explicit rule here is the safe choice for an accessibility
+   guarantee rather than trusting an unverifiable cross-browser assumption. */
+@media (prefers-reduced-motion: reduce) {
+  .quiz-progress__bar::-webkit-progress-value,
+  .quiz-progress__bar::-moz-progress-bar {
+    transition: none;
+  }
 }
 
 .quiz-progress__label {
