@@ -47,6 +47,17 @@ test.describe("PWA", () => {
     await startQuiz(page);
     await page.reload();
 
+    // StaleWhileRevalidate writes to Cache Storage asynchronously, so the
+    // fetch above may still be in flight — wait until the cached response is
+    // observable before cutting the network, or the offline read can race.
+    await page.waitForFunction(
+      async () => {
+        const cache = await caches.open("quiz-data");
+        return Boolean(await cache.match("/data/quiz-index.json"));
+      },
+      { timeout: 15_000 },
+    );
+
     await context.setOffline(true);
     try {
       await expect(page.locator("h1")).toContainText("AraOwl");
