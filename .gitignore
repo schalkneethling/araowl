@@ -18,10 +18,12 @@ playwright-report*/
 blob-report/
 /full-report.json
 
-# env files — only the varlock schema is committed
+# env files — only the varlock schema and committed per-env layers (which
+# hold 1Password references, never secret values) are tracked
 .env
 .env.*
 !.env.schema
+!.env.production
 
 # local tooling state
 .tokensave/

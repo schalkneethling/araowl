@@ -67,11 +67,31 @@ Security → Files & Folders. Known reports of the same behavior:
 - [Apple Community: PWA open issue](https://discussions.apple.com/thread/254923078)
 - [Apple Community: About "access data from other apps"](https://discussions.apple.com/thread/255856376)
 
+## Observability
+
+Client errors are reported to Sentry via `@sentry/react` (errors only — no
+tracing, replay, or PII). The DSN in [`.env.schema`](.env.schema) is
+deliberately public: DSNs ship in the client bundle by design and only allow
+event submission. Monitoring is disabled on the dev server and active in
+built output, with events tagged by `APP_ENV`.
+
+- **Verify the pipeline:** open any page with `?sentry-test` appended — a
+  clearly labelled error is thrown and should appear in the Sentry dashboard.
+- **Source maps:** production builds (`APP_ENV=production`) resolve
+  `SENTRY_AUTH_TOKEN` (1Password: `dev` vault → `araowl-sentry` →
+  `auth-token`) and upload hidden source maps to Sentry, deleting them from
+  `dist/` afterwards so maps are never deployed. Without the token — local
+  dev, e2e, the VRT container — the upload plugin disables itself and builds
+  proceed normally.
+
 ## Secrets
 
 Environment configuration is managed by [Varlock](https://varlock.dev) with the
 committed [`.env.schema`](.env.schema). Secret values live in 1Password and are
-resolved at run time — nothing sensitive is stored in this repository.
+resolved at build time — nothing sensitive is stored in this repository. The
+1Password _references_ (`op://…`) live in the committed
+[`.env.production`](.env.production) layer, which only loads when
+`APP_ENV=production`, so everyday builds never require 1Password access.
 
 ---
 

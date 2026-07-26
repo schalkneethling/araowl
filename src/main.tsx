@@ -1,15 +1,23 @@
 import "./styles/global.css";
 
+import { IslandErrorFallback } from "@/app/components/island-error-fallback";
 import { QuizApp } from "@/app/quiz-app";
 import { ThemeSwitcher } from "@/app/theme/theme-switcher";
+import { initErrorMonitoring, throwTestErrorIfRequested } from "@/instrument";
+import { ErrorBoundary } from "@sentry/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+
+// Before any root mounts, so render errors are captured from the first frame.
+initErrorMonitoring();
 
 const themeRoot = document.getElementById("theme-root");
 if (themeRoot) {
   createRoot(themeRoot).render(
     <StrictMode>
-      <ThemeSwitcher />
+      <ErrorBoundary fallback={<IslandErrorFallback />}>
+        <ThemeSwitcher />
+      </ErrorBoundary>
     </StrictMode>,
   );
 }
@@ -18,7 +26,11 @@ const quizRoot = document.getElementById("quiz-root");
 if (quizRoot) {
   createRoot(quizRoot).render(
     <StrictMode>
-      <QuizApp />
+      <ErrorBoundary fallback={<IslandErrorFallback />}>
+        <QuizApp />
+      </ErrorBoundary>
     </StrictMode>,
   );
 }
+
+throwTestErrorIfRequested();
