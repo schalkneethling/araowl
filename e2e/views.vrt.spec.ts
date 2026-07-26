@@ -102,6 +102,16 @@ for (const theme of THEMES) {
       await expectStableScreenshot(page, `results-${theme}.png`);
     });
 
+    test("analytics consent banner", async ({ page }) => {
+      // resetClientState seeds a declined choice; clearing it restores the
+      // first-visit state where the banner renders at the top of the page.
+      await page.evaluate(() => localStorage.removeItem("araowl:analytics-consent:v1"));
+      await page.reload();
+      await expect(page.getByRole("button", { name: "Allow analytics" })).toBeVisible();
+
+      await expectStableScreenshot(page, `consent-banner-${theme}.png`);
+    });
+
     test("start view with one past attempt", async ({ page }) => {
       await completeQuiz(page, questions, (question) => question.answerIndex);
       // The attempt is written to IndexedDB asynchronously after the results

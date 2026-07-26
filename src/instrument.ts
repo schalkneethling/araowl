@@ -8,10 +8,11 @@ import { ENV } from "varlock/env";
  * late for those.
  *
  * Errors only, and strictly no PII to third parties: no tracing, no replay,
- * no session tracking. The HttpContext integration is removed and
- * `beforeSend` drops any request context, so events never carry page URL,
- * referrer, or user-agent; `sendDefaultPii: false` disables IP collection.
- * The e2e suite asserts the outgoing envelope stays clean of these fields.
+ * no session tracking. The HttpContext and CultureContext integrations are
+ * removed and `beforeSend` drops any request context, so events never carry
+ * page URL, referrer, user-agent, locale, or timezone; `sendDefaultPii:
+ * false` disables IP collection. The e2e suite asserts the outgoing envelope
+ * stays clean of these fields.
  * `enabled` is gated to built output so the dev server never spends quota;
  * events carry APP_ENV so the dashboard can separate preview from production.
  */
@@ -22,12 +23,19 @@ if (ENV.SENTRY_DSN) {
     environment: ENV.APP_ENV ?? "dev",
     sendDefaultPii: false,
     integrations: (defaults) => {
-      return defaults.filter((integration) => integration.name !== "HttpContext");
+      // HttpContext attaches page URL/referrer/user-agent; CultureContext
+      // attaches locale and timezone (coarse location). Both are PII under
+      // this project's rules and neither is needed to fix a bug.
+      const blocked = new Set(["HttpContext", "CultureContext"]);
+      return defaults.filter((integration) => !blocked.has(integration.name));
     },
     beforeSend(event) {
       // Defense in depth for the no-PII guarantee should a future SDK or
-      // integration change reintroduce request metadata.
+      // integration change reintroduce request or culture metadata.
       delete event.request;
+      if (event.contexts) {
+        delete event.contexts["culture"];
+      }
       return event;
     },
   });

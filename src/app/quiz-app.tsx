@@ -1,4 +1,6 @@
-import { useCallback, useReducer, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
+import { trackEvent } from "@/core/analytics";
+import { computeScore } from "@/core/scoring";
 import { BundledQuizSource } from "@/core/sources/bundled-source";
 import { IdbScoreStore } from "@/core/storage/idb-score-store";
 import { QuizRunner } from "@/app/components/quiz-runner";
@@ -24,6 +26,8 @@ export function QuizApp() {
       .getQuiz()
       .then((index) => {
         dispatch({ type: "START_LOADED", questions: index.questions, source: index.source });
+        // No-op unless the user consented to analytics (see core/analytics).
+        trackEvent("quiz-started", { source: index.source });
       })
       .catch((error: unknown) => {
         dispatch({
@@ -36,6 +40,18 @@ export function QuizApp() {
   const handleSaved = useCallback(() => {
     setHistoryVersion((version) => version + 1);
   }, []);
+
+  // Completion is a reducer transition (ADVANCE on the last question), so the
+  // side effect lives here. State is stable while the results view is shown,
+  // so this fires once per completion. Aggregate numbers only — never PII.
+  // No-op without analytics consent.
+  useEffect(() => {
+    if (state.view !== "results") {
+      return;
+    }
+    const score = computeScore(state.quiz.questions, state.quiz.answers);
+    trackEvent("quiz-completed", { score: score.correct, total: score.total });
+  }, [state]);
 
   return (
     <div className="quiz-app">

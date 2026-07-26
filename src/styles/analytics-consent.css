@@ -1,0 +1,35 @@
+/* Consent banner: first content in the page, in normal flow (no overlay, no
+   focus stealing). Colors come from the token layer, so light-dark() handles
+   both themes without extra rules. */
+.analytics-consent__banner {
+  align-items: center;
+  background-color: var(--color-surface);
+  border-block-end: var(--border-primary);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-12);
+  justify-content: center;
+  margin-inline: auto;
+  padding: var(--size-12) var(--size-16);
+}
+
+.analytics-consent__text {
+  margin: 0;
+  max-inline-size: var(--max-content-size);
+}
+
+.analytics-consent__text strong {
+  display: block;
+}
+
+.analytics-consent__actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--size-8);
+}
+
+.analytics-consent__collapsed {
+  display: flex;
+  justify-content: flex-end;
+  padding-inline: var(--size-8);
+}

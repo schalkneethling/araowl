@@ -31,6 +31,10 @@ export async function resetClientState(page: Page): Promise<void> {
   await page.goto("/");
   await page.evaluate(() => {
     localStorage.clear();
+    // Seed a declined analytics choice so the consent banner stays out of
+    // specs that exercise other surfaces (and out of their VRT baselines);
+    // the banner has its own dedicated spec and VRT states.
+    localStorage.setItem("araowl:analytics-consent:v1", "denied");
     return new Promise<void>((resolve) => {
       const request = indexedDB.deleteDatabase("araowl");
       request.addEventListener("success", () => resolve());

@@ -4,6 +4,7 @@ import "@/instrument";
 
 import "./styles/global.css";
 
+import { AnalyticsConsentBanner } from "@/app/components/analytics-consent-banner";
 import { IslandErrorFallback } from "@/app/components/island-error-fallback";
 import { QuizApp } from "@/app/quiz-app";
 import { ThemeSwitcher } from "@/app/theme/theme-switcher";
@@ -11,6 +12,17 @@ import { throwTestErrorIfRequested } from "@/instrument";
 import { ErrorBoundary } from "@sentry/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+
+const consentRoot = document.getElementById("consent-root");
+if (consentRoot) {
+  createRoot(consentRoot).render(
+    <StrictMode>
+      <ErrorBoundary fallback={<IslandErrorFallback />}>
+        <AnalyticsConsentBanner />
+      </ErrorBoundary>
+    </StrictMode>,
+  );
+}
 
 const themeRoot = document.getElementById("theme-root");
 if (themeRoot) {
