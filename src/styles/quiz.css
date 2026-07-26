@@ -219,3 +219,15 @@
 .quiz-history__topics {
   color: var(--color-text-secondary);
 }
+
+.quiz-history__actions {
+  display: flex;
+  gap: var(--size-8);
+  margin-inline-start: auto;
+}
+
+.quiz-history__clear {
+  display: flex;
+  gap: var(--size-8);
+  justify-content: flex-end;
+}

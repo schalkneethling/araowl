@@ -140,5 +140,18 @@ for (const theme of THEMES) {
 
       await expectStableScreenshot(page, `start-with-history-${theme}.png`);
     });
+
+    test("history delete confirmation", async ({ page }) => {
+      await completeQuiz(page, questions, (question) => question.answerIndex);
+      await expect.poll(() => countStoredAttempts(page)).toBe(1);
+      await page.reload();
+
+      await page.getByRole("button", { name: /Delete attempt from/ }).press("Enter");
+      await expect(
+        page.getByRole("button", { name: /Confirm deletion of the attempt/ }),
+      ).toBeVisible();
+
+      await expectStableScreenshot(page, `history-confirm-${theme}.png`);
+    });
   });
 }

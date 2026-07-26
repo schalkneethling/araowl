@@ -100,6 +100,18 @@ test("start view with score history has no violations", async ({
   await expectAccessible(makeAxeBuilder, testInfo);
 });
 
+test("history delete confirmation state has no violations", async ({
+  page,
+  makeAxeBuilder,
+}, testInfo) => {
+  await seedAttempt(page);
+  await page.reload();
+  await page.getByRole("button", { name: /Delete attempt from/ }).press("Enter");
+  await expect(page.getByRole("button", { name: /Confirm deletion of the attempt/ })).toBeVisible();
+
+  await expectAccessible(makeAxeBuilder, testInfo);
+});
+
 test("active question with hints and feedback has no violations", async ({
   page,
   makeAxeBuilder,
