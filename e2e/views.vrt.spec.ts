@@ -39,7 +39,12 @@ async function setTheme(page: Page, theme: (typeof THEMES)[number]): Promise<voi
 async function expectStableScreenshot(page: Page, name: string): Promise<void> {
   // Self-hosted @fontsource fonts can swap in late and shift text metrics.
   await page.evaluate(() => document.fonts.ready.then(() => undefined));
-  await expect(page).toHaveScreenshot(name, { fullPage: true });
+  await expect(page).toHaveScreenshot(name, {
+    fullPage: true,
+    // Hides bottom-fixed elements, which stitch nondeterministically in
+    // full-page captures; see vrt-screenshot.css.
+    stylePath: new URL("vrt-screenshot.css", import.meta.url).pathname,
+  });
 }
 
 for (const theme of THEMES) {
@@ -100,6 +105,25 @@ for (const theme of THEMES) {
       await expect(page.getByRole("heading", { name: "Your results" })).toBeVisible();
 
       await expectStableScreenshot(page, `results-${theme}.png`);
+    });
+
+    test("analytics consent banner", async ({ page }) => {
+      // resetClientState seeds a declined choice; clearing it restores the
+      // first-visit state where the banner overlays the top of the page.
+      await page.evaluate(() => localStorage.removeItem("araowl:analytics-consent:v1"));
+      await page.reload();
+      await expect(page.getByRole("button", { name: "Allow analytics" })).toBeVisible();
+
+      await expectStableScreenshot(page, `consent-banner-${theme}.png`);
+    });
+
+    test("analytics preferences chip", async ({ page }) => {
+      // Element-level shot: the chip is bottom-fixed, which full-page
+      // captures stitch nondeterministically (hence its exclusion there).
+      await page.evaluate(() => document.fonts.ready.then(() => undefined));
+      await expect(page.locator(".analytics-consent__collapsed")).toHaveScreenshot(
+        `consent-chip-${theme}.png`,
+      );
     });
 
     test("start view with one past attempt", async ({ page }) => {

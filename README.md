@@ -71,10 +71,11 @@ Security → Files & Folders. Known reports of the same behavior:
 
 Client errors are reported to Sentry via `@sentry/react` — errors only, and
 no PII goes to third parties: no tracing, replay, or session tracking; the
-HttpContext integration is removed and `beforeSend` strips request context,
-so events carry no page URL, referrer, or user-agent; `sendDefaultPii:
-false` disables IP collection. An e2e test asserts the outgoing envelope
-stays clean of these fields. The DSN in [`.env.schema`](.env.schema) is
+HttpContext and CultureContext integrations are removed and `beforeSend`
+strips request and culture context, so events carry no page URL, referrer,
+user-agent, locale, or timezone; `sendDefaultPii: false` disables IP
+collection. An e2e test asserts the outgoing envelope stays clean of these
+fields. The DSN in [`.env.schema`](.env.schema) is
 deliberately public: DSNs ship in the client bundle by design and only allow
 event submission. Monitoring is disabled on the dev server and active in
 built output, with events tagged by `APP_ENV`.
@@ -89,6 +90,30 @@ built output, with events tagged by `APP_ENV`.
   `dist/` afterwards so maps are never deployed. Without the token — local
   dev, e2e, the VRT container — the upload plugin disables itself and builds
   proceed normally.
+
+### Analytics (Umami, consent-gated)
+
+Usage analytics run on a self-hosted [Umami](https://umami.is) instance —
+cookieless and aggregate-only — and are strictly **opt-in**: nothing loads
+from the analytics host unless the visitor allows it via the consent banner
+(the first content in the page, rendered as a fixed overlay so appearing
+and dismissing never shifts the layout, and revisable later through
+"Analytics preferences"). A previously granted choice can be revoked; a revocation
+after the script has already loaded takes full effect on the next page load.
+Tracked: pageviews plus two custom events, `quiz-started` (`{source}`) and
+`quiz-completed` (`{score, total}`) — aggregate numbers, never PII.
+
+### Content Security Policy
+
+Production builds inject a strict `<meta>` CSP (see `cspPlugin` in
+`vite.config.ts`): everything is same-origin except the Umami host
+(`script-src`/`connect-src`) and the Sentry ingest origin (`connect-src`),
+both derived from the env values the code itself uses. The only inline
+allowance is `style-src 'unsafe-inline'` — React Aria injects a runtime
+`<style>` for pressable touch handling and React sets inline style
+attributes; scripts stay locked down. The dev server is exempt (it injects
+inline styles for HMR); an e2e test asserts a full quiz run produces zero
+CSP violations in built output.
 
 ## Secrets
 

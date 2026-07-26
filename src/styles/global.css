@@ -26,6 +26,7 @@
 @import "@fontsource/merriweather/600.css";
 @import "./tokens.css" layer(tokens);
 @import "./typography.css" layer(typography);
+@import "./analytics-consent.css" layer(components);
 @import "./quiz.css" layer(components);
 @import "./theme-switcher.css" layer(components);
 @import "./utils.css" layer(utils);
