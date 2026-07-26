@@ -1,0 +1,7 @@
+/* Applied only inside toHaveScreenshot captures (stylePath). The collapsed
+   analytics chip is position: fixed at the viewport bottom, and fixed
+   elements stitch at nondeterministic offsets in full-page screenshots —
+   the chip gets its own element-level snapshot instead. */
+.analytics-consent__collapsed {
+  visibility: hidden;
+}

@@ -28,7 +28,8 @@
     <!-- First content in the page on purpose: keyboard and screen reader
          users encounter the analytics consent choice naturally, without
          live-region interruption or focus stealing (GOV.UK cookie-banner
-         precedent). -->
+         precedent). Rendered as a fixed overlay (see analytics-consent.css)
+         so its appearance and dismissal never shift the layout. -->
     <div id="consent-root"></div>
 
     <header class="site-header">

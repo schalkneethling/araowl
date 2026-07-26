@@ -96,8 +96,9 @@ built output, with events tagged by `APP_ENV`.
 Usage analytics run on a self-hosted [Umami](https://umami.is) instance —
 cookieless and aggregate-only — and are strictly **opt-in**: nothing loads
 from the analytics host unless the visitor allows it via the consent banner
-(the first content in the page, revisable later through "Analytics
-preferences"). A previously granted choice can be revoked; a revocation
+(the first content in the page, rendered as a fixed overlay so appearing
+and dismissing never shifts the layout, and revisable later through
+"Analytics preferences"). A previously granted choice can be revoked; a revocation
 after the script has already loaded takes full effect on the next page load.
 Tracked: pageviews plus two custom events, `quiz-started` (`{source}`) and
 `quiz-completed` (`{score, total}`) — aggregate numbers, never PII.

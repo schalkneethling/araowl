@@ -1,6 +1,9 @@
-/* Consent banner: first content in the page, in normal flow (no overlay, no
-   focus stealing). Colors come from the token layer, so light-dark() handles
-   both themes without extra rules. */
+/* Overlay, not in-flow: the island mounts after first paint, so an in-flow
+   banner would push content down when it appears and snap it back on
+   dismissal — layout shift (CLS) in both directions. Fixed positioning keeps
+   the layout stable, matching the web-builders-weekly crossword banner.
+   Focused skip links (z-index 999) still land above the banner. Colors come
+   from the token layer, so light-dark() handles both themes. */
 .analytics-consent__banner {
   align-items: center;
   background-color: var(--color-surface);
@@ -8,9 +11,15 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--size-12);
+  inset-block-start: 0;
+  inset-inline: 0;
   justify-content: center;
-  margin-inline: auto;
-  padding: var(--size-12) var(--size-16);
+  padding-block: var(--size-12);
+  /* Standalone PWA on notched devices: keep the banner clear of the notch. */
+  padding-block-start: calc(var(--size-12) + env(safe-area-inset-top, 0px));
+  padding-inline: var(--size-16);
+  position: fixed;
+  z-index: 100;
 }
 
 .analytics-consent__text {
@@ -28,8 +37,14 @@
   gap: var(--size-8);
 }
 
+/* Floating chip in the bottom corner: also out of flow (no shift when it
+   appears), styled as a surface so it stays readable over any content. */
 .analytics-consent__collapsed {
-  display: flex;
-  justify-content: flex-end;
-  padding-inline: var(--size-8);
+  background-color: var(--color-surface);
+  border: var(--border-primary);
+  border-radius: var(--radius-md);
+  inset-block-end: calc(var(--size-8) + env(safe-area-inset-bottom, 0px));
+  inset-inline-end: var(--size-8);
+  position: fixed;
+  z-index: 100;
 }
