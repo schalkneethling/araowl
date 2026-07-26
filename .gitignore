@@ -37,3 +37,6 @@ blob-report/
 *.njsproj
 *.sln
 *.sw?
+
+# pnpm store leak guard (containerized VRT runs)
+.pnpm-store/

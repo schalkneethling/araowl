@@ -15,7 +15,8 @@
     "typecheck": "tsc --noEmit",
     "quality": "vp run format:check && vp run lint && vp run typecheck",
     "test:e2e": "playwright test",
-    "test:a11y": "playwright test --config playwright.a11y.config.ts"
+    "test:a11y": "playwright test --config playwright.a11y.config.ts",
+    "test:vrt": "./scripts/vrt.sh"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.9",

@@ -31,6 +31,7 @@
     "env.d.ts",
     "vite.config.ts",
     "playwright.config.ts",
-    "playwright.a11y.config.ts"
+    "playwright.a11y.config.ts",
+    "playwright.vrt.config.ts"
   ]
 }
