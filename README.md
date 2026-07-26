@@ -43,6 +43,30 @@ pnpm run test:vrt -- --update-snapshots
 When a run fails, the diff images (expected / actual / diff) are written to
 `test-results/`.
 
+## Installing as an app (PWA)
+
+AraOwl is installable, and the bundled quiz works offline once installed —
+questions, hints, scoring, and attempt history all function without a
+connection, served from the service worker's cache. Anything not already
+cached still needs the network: installing the app in the first place,
+receiving app updates, and (once they ship) generating AI quizzes.
+
+### macOS: "Data Access Blocked" notification
+
+After opening the installed app on macOS you may see a system notification:
+_"AraOwl" tried to access your data from other apps and was blocked._
+
+This is a macOS privacy (TCC) notification about the launcher Chrome creates
+for an installed PWA — a small native app that starts Chrome with the right
+profile — not about anything AraOwl's own code does; AraOwl is a web app with
+no filesystem access. In our testing on macOS the notification appeared once
+after install, and the app still launched and worked, including fully
+offline. The permission can be managed under System Settings → Privacy &
+Security → Files & Folders. Known reports of the same behavior:
+
+- [Apple Community: PWA open issue](https://discussions.apple.com/thread/254923078)
+- [Apple Community: About "access data from other apps"](https://discussions.apple.com/thread/255856376)
+
 ## Secrets
 
 Environment configuration is managed by [Varlock](https://varlock.dev) with the
