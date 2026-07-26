@@ -1,29 +1,17 @@
-import { type DBSchema, type IDBPDatabase, openDB } from "idb";
+import type { IDBPDatabase } from "idb";
 import type { QuizAttempt } from "@shared/schema";
+import { type AraowlDB, openAraowlDb } from "@/core/storage/araowl-db";
 import type { ScoreStore } from "@/core/storage/score-store";
 
-const DB_NAME = "araowl";
-const DB_VERSION = 1;
 const STORE = "attempts";
-
-interface AraowlDB extends DBSchema {
-  attempts: {
-    key: string;
-    value: QuizAttempt;
-    indexes: { finishedAt: string };
-  };
-}
 
 /** IndexedDB-backed ScoreStore. Keyed by attempt id, ordered via a finishedAt index. */
 export class IdbScoreStore implements ScoreStore {
   private dbPromise: Promise<IDBPDatabase<AraowlDB>> | undefined;
 
   private db(): Promise<IDBPDatabase<AraowlDB>> {
-    this.dbPromise ??= openDB<AraowlDB>(DB_NAME, DB_VERSION, {
-      upgrade(database) {
-        const store = database.createObjectStore(STORE, { keyPath: "id" });
-        store.createIndex("finishedAt", "finishedAt");
-      },
+    // Schema/versioning lives in araowl-db.ts, shared with IdbProgressStore.
+    this.dbPromise ??= openAraowlDb({
       // Another context (tab, test, devtools) wants to upgrade or delete the
       // database: release our connection so their request isn't left blocked.
       blocking: () => {

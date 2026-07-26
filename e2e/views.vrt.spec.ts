@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import {
   completeQuiz,
+  countCycleCompleted,
   countStoredAttempts,
   loadQuizQuestions,
   resetClientState,
@@ -56,6 +57,9 @@ for (const theme of THEMES) {
     });
 
     test("start view with empty history", async ({ page }) => {
+      // The cycle-progress line renders after an async IndexedDB read —
+      // anchor on the exact fresh-cycle text so the capture never races it.
+      await expect(page.getByText(/^0 of 10 questions completed/)).toBeVisible();
       await expectStableScreenshot(page, `start-empty-${theme}.png`);
     });
 
@@ -114,6 +118,9 @@ for (const theme of THEMES) {
       await page.reload();
       await expect(page.getByRole("button", { name: "Allow analytics" })).toBeVisible();
 
+      // The cycle-progress line renders after an async IndexedDB read —
+      // anchor on the exact fresh-cycle text so the capture never races it.
+      await expect(page.getByText(/^0 of 10 questions completed/)).toBeVisible();
       await expectStableScreenshot(page, `consent-banner-${theme}.png`);
     });
 
@@ -128,22 +135,27 @@ for (const theme of THEMES) {
 
     test("start view with one past attempt", async ({ page }) => {
       await completeQuiz(page, questions, (question) => question.answerIndex);
-      // The attempt is written to IndexedDB asynchronously after the results
-      // view mounts — reloading before the write commits loses it (same
-      // guard as quiz.spec.ts's history test).
+      // Both async post-completion writes must commit before the reload: the
+      // attempt (score store) and the cycle progress (progress store) — the
+      // latter drives the "All N completed" line this screenshot shows.
       await expect.poll(() => countStoredAttempts(page)).toBe(1);
+      await expect.poll(() => countCycleCompleted(page)).toBe(TOTAL_QUESTIONS);
       await page.reload();
 
       const history = page.getByRole("complementary", { name: "Past attempts" });
       await expect(history.getByRole("listitem")).toHaveCount(1);
       await expect(history).toContainText(`${TOTAL_QUESTIONS} / ${TOTAL_QUESTIONS}`);
 
+      // Anchor on the exact exhausted-cycle text: the generic phrase would
+      // also match the transient "0 of 10" state before progress loads.
+      await expect(page.getByText(/^All 10 questions completed/)).toBeVisible();
       await expectStableScreenshot(page, `start-with-history-${theme}.png`);
     });
 
     test("history delete confirmation", async ({ page }) => {
       await completeQuiz(page, questions, (question) => question.answerIndex);
       await expect.poll(() => countStoredAttempts(page)).toBe(1);
+      await expect.poll(() => countCycleCompleted(page)).toBe(TOTAL_QUESTIONS);
       await page.reload();
 
       await page.getByRole("button", { name: /Delete attempt from/ }).press("Enter");
@@ -151,6 +163,9 @@ for (const theme of THEMES) {
         page.getByRole("button", { name: /Confirm deletion of the attempt/ }),
       ).toBeVisible();
 
+      // Anchor on the exact exhausted-cycle text: the generic phrase would
+      // also match the transient "0 of 10" state before progress loads.
+      await expect(page.getByText(/^All 10 questions completed/)).toBeVisible();
       await expectStableScreenshot(page, `history-confirm-${theme}.png`);
     });
   });

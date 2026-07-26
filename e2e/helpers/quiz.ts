@@ -46,9 +46,9 @@ export async function resetClientState(page: Page): Promise<void> {
 }
 
 /** Start the quiz from the start view and wait for question 1. */
-export async function startQuiz(page: Page): Promise<void> {
+export async function startQuiz(page: Page, total: number = TOTAL_QUESTIONS): Promise<void> {
   await page.getByRole("button", { name: "Start quiz" }).press("Enter");
-  await expect(page.getByText(`Question 1 of ${TOTAL_QUESTIONS}`)).toBeVisible();
+  await expect(page.getByText(`Question 1 of ${total}`)).toBeVisible();
 }
 
 /**
@@ -81,6 +81,74 @@ export async function completeQuiz(
       .press("Enter");
   }
   await expect(page.getByRole("heading", { name: "Your results" })).toBeVisible();
+}
+
+/**
+ * Play a full quiz without assuming question order (randomized mode): each
+ * round, the current question is identified by its heading text and answered
+ * with pickIndex(question). `total` is how many questions the round has.
+ */
+export async function completeQuizAnyOrder(
+  page: Page,
+  questions: QuizQuestionData[],
+  total: number,
+  pickIndex: (question: QuizQuestionData) => number,
+): Promise<void> {
+  await startQuiz(page, total);
+  for (let number = 1; number <= total; number++) {
+    await expect(page.getByText(`Question ${number} of ${total}`)).toBeVisible();
+    const headingText = await page
+      .locator("#quiz-root")
+      .getByRole("heading", { level: 2 })
+      .first()
+      .innerText();
+    const question = questions.find((candidate) => candidate.question === headingText.trim());
+    if (!question) {
+      throw new Error(`No manifest question matches heading: ${headingText}`);
+    }
+
+    const chosen = pickIndex(question);
+    await page
+      .locator("#quiz-root")
+      .getByRole("radio", { name: question.options[chosen] ?? "" })
+      .press("Space");
+    await page.getByRole("button", { name: "Check answer" }).press("Enter");
+    await page
+      .getByRole("button", { name: number === total ? "See results" : "Next question" })
+      .press("Enter");
+  }
+  await expect(page.getByRole("heading", { name: "Your results" })).toBeVisible();
+}
+
+/** Count question-progress rows marked completed this cycle (0 when absent). */
+export function countCycleCompleted(page: Page): Promise<number> {
+  return page.evaluate(() => {
+    return new Promise<number>((resolve) => {
+      const open = indexedDB.open("araowl");
+      open.addEventListener("success", () => {
+        const db = open.result;
+        if (!db.objectStoreNames.contains("question-progress")) {
+          db.close();
+          resolve(0);
+          return;
+        }
+        const request = db
+          .transaction("question-progress", "readonly")
+          .objectStore("question-progress")
+          .getAll();
+        request.addEventListener("success", () => {
+          const rows = request.result as { completedInCycle?: boolean }[];
+          db.close();
+          resolve(rows.filter((row) => row.completedInCycle).length);
+        });
+        request.addEventListener("error", () => {
+          db.close();
+          resolve(0);
+        });
+      });
+      open.addEventListener("error", () => resolve(0));
+    });
+  });
 }
 
 /** Count attempts currently persisted in IndexedDB (0 when the DB is absent). */
