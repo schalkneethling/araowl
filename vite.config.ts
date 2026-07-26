@@ -34,6 +34,16 @@ const contentSecurityPolicy = [
 // Build-only: the dev server injects inline <style> elements for CSS
 // modules/HMR, which a strict CSP would break — production output is what
 // the policy protects and what e2e verifies (the suite tests built output).
+//
+// The policy ships twice, deliberately:
+// - as a real response header via the emitted Cloudflare Pages `_headers`
+//   file — headers apply before parsing and support header-only directives
+//   (frame-ancestors, which a <meta> CSP cannot express, is the
+//   clickjacking defense for the destructive history actions);
+// - as a <meta> tag — fallback coverage for any host that ignores
+//   `_headers` (vp preview, the e2e webServer), which also keeps the
+//   zero-CSP-violations e2e guard meaningful.
+// Both derive from the same constant, so they cannot drift.
 const cspPlugin: PluginOption = {
   name: "araowl:csp",
   apply: "build",
@@ -48,6 +58,21 @@ const cspPlugin: PluginOption = {
         },
       ],
     };
+  },
+  generateBundle() {
+    this.emitFile({
+      type: "asset",
+      fileName: "_headers",
+      source: [
+        "/*",
+        `  Content-Security-Policy: ${contentSecurityPolicy}; frame-ancestors 'none'`,
+        "  X-Frame-Options: DENY",
+        "  X-Content-Type-Options: nosniff",
+        "  Referrer-Policy: strict-origin-when-cross-origin",
+        "  Permissions-Policy: camera=(), microphone=(), geolocation=()",
+        "",
+      ].join("\n"),
+    });
   },
 };
 

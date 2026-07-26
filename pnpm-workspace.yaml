@@ -1,3 +1,6 @@
+# Supply-chain guard: refuse package versions younger than a day, so a
+# briefly-hijacked release is likely yanked before it can be installed here.
+minimumReleaseAge: 1440
 allowBuilds:
   # sentry-cli downloads its binary in postinstall; the vite plugin shells out
   # to it for source-map upload

@@ -115,6 +115,40 @@ attributes; scripts stay locked down. The dev server is exempt (it injects
 inline styles for HMR); an e2e test asserts a full quiz run produces zero
 CSP violations in built output.
 
+## Deployment (Cloudflare Pages)
+
+Each release is deployed manually with wrangler. Production builds must run
+with `APP_ENV=production` so varlock loads [`.env.production`](.env.production)
+and resolves the 1Password references (desktop app locally; an `OP_TOKEN`
+service account in CI later) — this is also what enables Sentry source-map
+upload.
+
+```sh
+APP_ENV=production pnpm run build   # typecheck + build + source maps + _headers
+wrangler login                      # once
+wrangler pages project create araowl   # first deploy only
+wrangler pages deploy dist --project-name araowl
+```
+
+Security response headers ship via the build-emitted `dist/_headers`
+(Cloudflare Pages reads it): the CSP as a real header including
+`frame-ancestors 'none'`, `X-Frame-Options`, `X-Content-Type-Options`,
+`Referrer-Policy`, and a minimal `Permissions-Policy`. The `<meta>` CSP
+remains as fallback for hosts that ignore `_headers`.
+
+**Custom domain:** in the Cloudflare Pages project add
+`araowl.schalkneethling.com`, then CNAME it to the project's `*.pages.dev`
+host in Netlify DNS (DNS stays on Netlify).
+
+**Recommended:** add a Cloudflare WAF rate-limiting rule for the domain —
+the site is static today, but the rule is in place before Phase 4 adds AI
+endpoints.
+
+**Post-deploy smoke checks:** open the site → allow analytics → complete a
+quiz (pageview + `quiz-started`/`quiz-completed` in Umami); append
+`?sentry-test` (error with readable stack in Sentry); install the PWA and
+verify the quiz offline; Lighthouse installability pass.
+
 ## Secrets
 
 Environment configuration is managed by [Varlock](https://varlock.dev) with the
