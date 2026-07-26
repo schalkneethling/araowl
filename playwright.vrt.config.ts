@@ -1,11 +1,13 @@
 import { defineConfig, devices } from "@playwright/test";
 
+// Visual regression config. Run exclusively inside the version-pinned
+// Playwright Docker image via `pnpm test:vrt` — font rasterization differs
+// across operating systems, so baselines are only meaningful when every run
+// (local today, CI later) renders on the identical Linux image. The committed
+// baselines in e2e/*-snapshots/ therefore all carry the -linux suffix.
 export default defineConfig({
   testDir: "e2e",
-  // VRT specs only run inside the pinned Playwright Docker image (see
-  // playwright.vrt.config.ts) — running them on the host would mint
-  // platform-specific baselines that diverge from the committed Linux ones.
-  testIgnore: ["**/*.a11y.spec.ts", "**/*.vrt.spec.ts"],
+  testMatch: "**/*.vrt.spec.ts",
   reporter: [["list"]],
   webServer: {
     // Build first: vp preview serves whatever is in dist/, which would
