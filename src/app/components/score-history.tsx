@@ -35,6 +35,10 @@ export function ScoreHistory({ store, refreshKey }: ScoreHistoryProps) {
   const focusTargetRef = useRef<FocusTarget>(null);
   const [attempts, setAttempts] = useState<QuizAttempt[] | null>(null);
   const [pending, setPending] = useState<PendingConfirm>(null);
+  // A confirmed destructive write is in flight: further Confirm presses are
+  // ignored and Cancel is disabled — cancelling a write that has already
+  // started would show the row restored only for it to vanish on settle.
+  const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState("");
 
   useEffect(() => {
@@ -78,6 +82,13 @@ export function ScoreHistory({ store, refreshKey }: ScoreHistoryProps) {
   }, [attempts, pending]);
 
   function deleteAttempt(id: string) {
+    if (busy) {
+      return;
+    }
+    setBusy(true);
+    // Re-arm the live region: consecutive identical messages produce no DOM
+    // mutation, so a second "Attempt deleted." would never be announced.
+    setStatus("");
     const current = attempts ?? [];
     const index = current.findIndex((a) => a.id === id);
     const remaining = current.filter((a) => a.id !== id);
@@ -91,11 +102,16 @@ export function ScoreHistory({ store, refreshKey }: ScoreHistoryProps) {
           : { kind: "heading" };
         deleteButtonRefs.current.delete(id);
         setAttempts(remaining);
+        setBusy(false);
         setPending(null);
         setStatus("Attempt deleted.");
       },
       (error: unknown) => {
         console.error("Failed to delete attempt", error);
+        // The focused Confirm unmounts with the confirmation state — without
+        // a target, failure would drop keyboard focus to the body.
+        focusTargetRef.current = { kind: "delete-button", id };
+        setBusy(false);
         setPending(null);
         setStatus("Something went wrong. Your history was not changed.");
       },
@@ -103,16 +119,24 @@ export function ScoreHistory({ store, refreshKey }: ScoreHistoryProps) {
   }
 
   function clearHistory() {
+    if (busy) {
+      return;
+    }
+    setBusy(true);
+    setStatus("");
     void store.clear().then(
       () => {
         focusTargetRef.current = { kind: "heading" };
         deleteButtonRefs.current.clear();
         setAttempts([]);
+        setBusy(false);
         setPending(null);
         setStatus("History cleared.");
       },
       (error: unknown) => {
         console.error("Failed to clear history", error);
+        focusTargetRef.current = { kind: "clear-button" };
+        setBusy(false);
         setPending(null);
         setStatus("Something went wrong. Your history was not changed.");
       },
@@ -158,6 +182,7 @@ export function ScoreHistory({ store, refreshKey }: ScoreHistoryProps) {
                           </span>
                         </Button>
                         <Button
+                          isDisabled={busy}
                           onPress={() => {
                             focusTargetRef.current = { kind: "delete-button", id: attempt.id };
                             setPending(null);
@@ -198,6 +223,7 @@ export function ScoreHistory({ store, refreshKey }: ScoreHistoryProps) {
                   <span className="visually-hidden"> deletion of all attempts</span>
                 </Button>
                 <Button
+                  isDisabled={busy}
                   onPress={() => {
                     focusTargetRef.current = { kind: "clear-button" };
                     setPending(null);
