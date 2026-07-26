@@ -72,8 +72,10 @@ export default defineConfig({
   ],
   build: {
     // Maps exist for Sentry only ("hidden": no sourceMappingURL comment in
-    // the served JS); the plugin above removes them after upload.
-    sourcemap: "hidden",
+    // the served JS), so they are generated under the same predicate that
+    // enables the upload plugin — tokenless builds (dev, e2e, VRT) emit none,
+    // and uploads always delete them from dist afterwards.
+    sourcemap: ENV.SENTRY_AUTH_TOKEN ? "hidden" : false,
   },
   resolve: {
     alias: {

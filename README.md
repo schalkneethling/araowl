@@ -69,14 +69,20 @@ Security → Files & Folders. Known reports of the same behavior:
 
 ## Observability
 
-Client errors are reported to Sentry via `@sentry/react` (errors only — no
-tracing, replay, or PII). The DSN in [`.env.schema`](.env.schema) is
+Client errors are reported to Sentry via `@sentry/react` — errors only, and
+no PII goes to third parties: no tracing, replay, or session tracking; the
+HttpContext integration is removed and `beforeSend` strips request context,
+so events carry no page URL, referrer, or user-agent; `sendDefaultPii:
+false` disables IP collection. An e2e test asserts the outgoing envelope
+stays clean of these fields. The DSN in [`.env.schema`](.env.schema) is
 deliberately public: DSNs ship in the client bundle by design and only allow
 event submission. Monitoring is disabled on the dev server and active in
 built output, with events tagged by `APP_ENV`.
 
-- **Verify the pipeline:** open any page with `?sentry-test` appended — a
-  clearly labelled error is thrown and should appear in the Sentry dashboard.
+- **Verify the pipeline:** monitoring only runs in built output, so serve a
+  production build (`vp build && vp preview`) — not `vp dev` — and open
+  `http://localhost:4173/?sentry-test`. A clearly labelled error is thrown
+  and should appear in the Sentry dashboard.
 - **Source maps:** production builds (`APP_ENV=production`) resolve
   `SENTRY_AUTH_TOKEN` (1Password: `dev` vault → `araowl-sentry` →
   `auth-token`) and upload hidden source maps to Sentry, deleting them from

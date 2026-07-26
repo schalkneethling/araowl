@@ -2,23 +2,34 @@ import * as Sentry from "@sentry/react";
 import { ENV } from "varlock/env";
 
 /**
- * Initialize Sentry error monitoring. Must run before any React root mounts
- * so module-evaluation and render errors are captured from the first frame.
+ * Sentry error monitoring, initialized as a module side effect so that
+ * importing this module first (see main.tsx) captures errors thrown while
+ * later app modules evaluate — a function called after imports would run too
+ * late for those.
  *
- * Errors only: no tracing, no replay, no PII. `enabled` is gated to built
- * output so the dev server never spends quota; events carry APP_ENV so the
- * dashboard can separate preview from production.
+ * Errors only, and strictly no PII to third parties: no tracing, no replay,
+ * no session tracking. The HttpContext integration is removed and
+ * `beforeSend` drops any request context, so events never carry page URL,
+ * referrer, or user-agent; `sendDefaultPii: false` disables IP collection.
+ * The e2e suite asserts the outgoing envelope stays clean of these fields.
+ * `enabled` is gated to built output so the dev server never spends quota;
+ * events carry APP_ENV so the dashboard can separate preview from production.
  */
-export function initErrorMonitoring(): void {
-  if (!ENV.SENTRY_DSN) {
-    return;
-  }
-
+if (ENV.SENTRY_DSN) {
   Sentry.init({
     dsn: ENV.SENTRY_DSN,
     enabled: import.meta.env.PROD,
     environment: ENV.APP_ENV ?? "dev",
     sendDefaultPii: false,
+    integrations: (defaults) => {
+      return defaults.filter((integration) => integration.name !== "HttpContext");
+    },
+    beforeSend(event) {
+      // Defense in depth for the no-PII guarantee should a future SDK or
+      // integration change reintroduce request metadata.
+      delete event.request;
+      return event;
+    },
   });
 }
 
@@ -26,7 +37,9 @@ export function initErrorMonitoring(): void {
  * Deliberate crash hook for verifying the pipeline end to end: load any page
  * with `?sentry-test` and an unhandled, clearly-labelled error is thrown
  * after mount. Used for the Phase 2.5 stop and post-deploy smoke checks; it
- * only wastes our own quota, so it is safe to leave in.
+ * only wastes our own quota, so it is safe to leave in. Note: monitoring is
+ * active in built output only, so verify against `vp build && vp preview`,
+ * never the dev server.
  */
 export function throwTestErrorIfRequested(): void {
   if (!new URLSearchParams(window.location.search).has("sentry-test")) {

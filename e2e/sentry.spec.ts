@@ -5,11 +5,16 @@ import { completeQuiz, loadQuizQuestions, resetClientState } from "./helpers/qui
 // tests hold even if the DSN or region changes.
 const SENTRY_URL = /https:\/\/[^/]*sentry\.io\//;
 
-/** Intercept all Sentry traffic; returns the captured request URLs. */
-async function interceptSentry(page: Page): Promise<string[]> {
-  const requests: string[] = [];
+type CapturedRequest = {
+  url: string;
+  body: string;
+};
+
+/** Intercept all Sentry traffic; returns the captured requests. */
+async function interceptSentry(page: Page): Promise<CapturedRequest[]> {
+  const requests: CapturedRequest[] = [];
   await page.route(SENTRY_URL, (route) => {
-    requests.push(route.request().url());
+    requests.push({ url: route.request().url(), body: route.request().postData() ?? "" });
     return route.fulfill({ status: 200, contentType: "application/json", body: "{}" });
   });
   return requests;
@@ -37,6 +42,19 @@ test.describe("sentry", () => {
     // The deliberate error is thrown after mount; the SDK ships it as an
     // envelope POST. Intercepted above, so no quota is spent.
     await expect.poll(() => requests.length, { timeout: 10_000 }).toBeGreaterThan(0);
-    expect(requests[0]).toContain("/envelope/");
+    expect(requests[0]?.url).toContain("/envelope/");
+
+    // The envelope body is newline-delimited JSON; find the error event and
+    // hold the no-PII guarantee: our labelled error is present, but no
+    // request context (page URL, referrer, user-agent) and no user data.
+    const items = (requests[0]?.body ?? "")
+      .split("\n")
+      .filter(Boolean)
+      .map((line) => JSON.parse(line) as Record<string, unknown>);
+    const errorEvent = items.find((item) => "exception" in item);
+    expect(errorEvent, "envelope must contain an error event").toBeDefined();
+    expect(JSON.stringify(errorEvent)).toContain("AraOwl Sentry verification error");
+    expect(errorEvent?.["request"]).toBeUndefined();
+    expect(errorEvent?.["user"]).toBeUndefined();
   });
 });

@@ -1,15 +1,16 @@
+// First import on purpose: Sentry initializes as a side effect of this
+// module, so errors thrown while the app modules below evaluate are captured.
+import "@/instrument";
+
 import "./styles/global.css";
 
 import { IslandErrorFallback } from "@/app/components/island-error-fallback";
 import { QuizApp } from "@/app/quiz-app";
 import { ThemeSwitcher } from "@/app/theme/theme-switcher";
-import { initErrorMonitoring, throwTestErrorIfRequested } from "@/instrument";
+import { throwTestErrorIfRequested } from "@/instrument";
 import { ErrorBoundary } from "@sentry/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-
-// Before any root mounts, so render errors are captured from the first frame.
-initErrorMonitoring();
 
 const themeRoot = document.getElementById("theme-root");
 if (themeRoot) {
