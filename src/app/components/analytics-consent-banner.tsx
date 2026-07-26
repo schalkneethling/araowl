@@ -4,6 +4,7 @@ import {
   type AnalyticsConsent,
   loadUmamiAnalytics,
   readAnalyticsConsent,
+  UMAMI_SCRIPT_ID,
   writeAnalyticsConsent,
 } from "@/core/analytics";
 
@@ -29,10 +30,21 @@ export function AnalyticsConsentBanner() {
   }, [consent]);
 
   const choose = useCallback((choice: AnalyticsConsent) => {
+    // Persisted before any state updates; if storage is unavailable the
+    // choice still holds for this session and the banner re-asks next visit.
     writeAnalyticsConsent(choice);
     setConsent(choice);
     setReopened(false);
-    setConfirmation(choice === "granted" ? "Analytics enabled." : "Analytics disabled.");
+    if (choice === "granted") {
+      setConfirmation("Analytics enabled.");
+      return;
+    }
+    // Revoking cannot unload an already-running script mid-session — say so.
+    setConfirmation(
+      document.getElementById(UMAMI_SCRIPT_ID)
+        ? "Analytics disabled. This takes full effect the next time the page loads."
+        : "Analytics disabled.",
+    );
   }, []);
 
   const showBanner = consent === null || reopened;
@@ -40,7 +52,15 @@ export function AnalyticsConsentBanner() {
   return (
     <section aria-labelledby="analytics-consent-title" className="analytics-consent">
       {showBanner ? (
-        <div className="analytics-consent__banner">
+        // tabIndex: the banner scrolls internally in short/zoomed viewports
+        // (max-block-size in analytics-consent.css), and a scrollable region
+        // must be keyboard-focusable to be keyboard-scrollable.
+        <div
+          aria-labelledby="analytics-consent-title"
+          className="analytics-consent__banner"
+          role="group"
+          tabIndex={0}
+        >
           <p className="analytics-consent__text">
             <strong id="analytics-consent-title">Privacy-friendly analytics</strong> AraOwl can use
             cookieless, self-hosted analytics to understand aggregate usage — no ad trackers, no

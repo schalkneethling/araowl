@@ -38,6 +38,18 @@ if (ENV.SENTRY_DSN) {
       }
       return event;
     },
+    beforeBreadcrumb(breadcrumb) {
+      // Breadcrumbs may carry URLs: navigation crumbs are page URLs
+      // (dropped entirely), fetch/xhr crumbs keep method/status for
+      // debugging but lose the URL.
+      if (breadcrumb.category === "navigation") {
+        return null;
+      }
+      if (breadcrumb.category === "fetch" || breadcrumb.category === "xhr") {
+        delete breadcrumb.data?.["url"];
+      }
+      return breadcrumb;
+    },
   });
 }
 

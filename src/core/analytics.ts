@@ -51,6 +51,31 @@ export function writeAnalyticsConsent(
   }
 }
 
+type PendingEvent = {
+  name: string;
+  data?: Record<string, string | number>;
+};
+
+// Events recorded between consent (script requested) and the deferred script
+// becoming ready. Only ever populated after consent; bounded so a
+// never-loading script cannot grow it.
+const pendingEvents: PendingEvent[] = [];
+const PENDING_EVENT_LIMIT = 20;
+
+function getUmami(): UmamiGlobal | undefined {
+  return (globalThis as { umami?: UmamiGlobal }).umami;
+}
+
+function flushPendingEvents(): void {
+  const umami = getUmami();
+  if (!umami?.track) {
+    return;
+  }
+  for (const event of pendingEvents.splice(0)) {
+    umami.track(event.name, event.data);
+  }
+}
+
 /**
  * Inject the Umami tracking script. Must only be called after the user has
  * granted consent — nothing is fetched from the analytics host before then.
@@ -69,15 +94,34 @@ export function loadUmamiAnalytics(documentRef: Document = document): void {
   script.id = UMAMI_SCRIPT_ID;
   script.src = ENV.UMAMI_SCRIPT_URL;
   script.dataset["websiteId"] = ENV.UMAMI_WEBSITE_ID;
+  // Deliver events recorded while the deferred script was still in flight
+  // (e.g. consent granted and a quiz started immediately).
+  script.addEventListener("load", flushPendingEvents);
   documentRef.head.appendChild(script);
 }
 
 /**
  * Record a named event with optional aggregate data (numbers/short strings
- * only — never PII). Silently a no-op unless the Umami script is loaded,
- * which can only happen after consent.
+ * only — never PII). Before consent this is a silent no-op; after consent,
+ * events fired while the script is still loading are queued and flushed on
+ * script load instead of being dropped.
  */
-export function trackEvent(name: string, data?: Record<string, string | number>): void {
-  const umami = (globalThis as { umami?: UmamiGlobal }).umami;
-  umami?.track?.(name, data);
+export function trackEvent(
+  name: string,
+  data?: Record<string, string | number>,
+  documentRef: Document | null = globalThis.document ?? null,
+): void {
+  const umami = getUmami();
+  if (umami?.track) {
+    flushPendingEvents();
+    umami.track(name, data);
+    return;
+  }
+
+  // Queue only when the script has actually been requested (consent given);
+  // without consent the script element never exists and nothing is retained.
+  const scriptRequested = Boolean(documentRef?.getElementById(UMAMI_SCRIPT_ID));
+  if (scriptRequested && pendingEvents.length < PENDING_EVENT_LIMIT) {
+    pendingEvents.push({ name, data });
+  }
 }

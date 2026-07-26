@@ -65,5 +65,15 @@ test.describe("sentry", () => {
     // integration is removed and beforeSend scrubs any reintroduction.
     const contexts = (errorEvent?.["contexts"] ?? {}) as Record<string, unknown>;
     expect(contexts["culture"]).toBeUndefined();
+
+    // Breadcrumbs must not smuggle URLs either: navigation crumbs are
+    // dropped and fetch/xhr crumbs are stripped of their url field.
+    type Crumb = { category?: string; data?: Record<string, unknown> };
+    const breadcrumbs =
+      (errorEvent?.["breadcrumbs"] as { values?: Crumb[] } | undefined)?.values ?? [];
+    for (const crumb of breadcrumbs) {
+      expect(crumb.category).not.toBe("navigation");
+      expect(crumb.data?.["url"]).toBeUndefined();
+    }
   });
 });

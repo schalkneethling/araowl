@@ -46,13 +46,27 @@ type FakeScript = {
   id: string;
   src: string;
   dataset: Record<string, string>;
+  listeners: Record<string, () => void>;
+  addEventListener: (type: string, listener: () => void) => void;
 };
 
 function makeFakeDocument() {
   const appended: FakeScript[] = [];
   const byId = new Map<string, FakeScript>();
   const documentRef = {
-    createElement: () => ({ defer: false, id: "", src: "", dataset: {} }) as FakeScript,
+    createElement: () => {
+      const script: FakeScript = {
+        defer: false,
+        id: "",
+        src: "",
+        dataset: {},
+        listeners: {},
+        addEventListener(type, listener) {
+          this.listeners[type] = listener;
+        },
+      };
+      return script;
+    },
     getElementById: (id: string) => byId.get(id) ?? null,
     head: {
       appendChild: (script: FakeScript) => {
@@ -131,5 +145,33 @@ describe("trackEvent", () => {
     trackEvent("quiz-completed", { score: 7, total: 10 });
 
     expect(track).toHaveBeenCalledWith("quiz-completed", { score: 7, total: 10 });
+  });
+
+  it("queues events fired after consent while the script loads, then flushes on load", () => {
+    const { appended, documentRef } = makeFakeDocument();
+    loadUmamiAnalytics(documentRef);
+
+    // Script requested but umami global not yet available: events queue.
+    trackEvent("quiz-started", { source: "bundled" }, documentRef);
+    const track = vi.fn();
+    (globalThis as { umami?: unknown }).umami = { track };
+
+    appended[0]?.listeners["load"]?.();
+
+    expect(track).toHaveBeenCalledWith("quiz-started", { source: "bundled" });
+  });
+
+  it("retains nothing when the script was never requested (no consent)", () => {
+    const { appended, documentRef } = makeFakeDocument();
+
+    // No loadUmamiAnalytics call: nothing may queue.
+    trackEvent("quiz-started", undefined, documentRef);
+
+    loadUmamiAnalytics(documentRef);
+    const track = vi.fn();
+    (globalThis as { umami?: unknown }).umami = { track };
+    appended[0]?.listeners["load"]?.();
+
+    expect(track).not.toHaveBeenCalled();
   });
 });

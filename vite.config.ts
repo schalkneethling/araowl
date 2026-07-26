@@ -16,7 +16,9 @@ const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src 'self' ${umamiOrigin}`.trim(),
   `connect-src 'self' ${umamiOrigin} ${sentryIngestOrigin}`.replaceAll(/ +/g, " ").trim(),
-  "img-src 'self' data:",
+  // No data: allowance — nothing in the built output uses data: images
+  // (verified against dist CSS, source, and the manifest).
+  "img-src 'self'",
   // 'unsafe-inline' is a deliberate trade-off: React Aria injects a runtime
   // <style> (touch-action for pressables) and React sets inline style
   // attributes; hash-pinning the injected content would break touch handling

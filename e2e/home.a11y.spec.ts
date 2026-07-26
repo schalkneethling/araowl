@@ -25,6 +25,11 @@ test("home page in dark theme has no detectable accessibility violations", async
   makeAxeBuilder,
 }, testInfo) => {
   await page.goto("/");
+  // The consent banner overlays the header (and thus the theme switcher)
+  // until a choice is made — decline first, which also puts the post-choice
+  // surface (preferences chip + status region) into the dark-theme scan.
+  // The banner itself is scanned by the light-theme test above.
+  await page.getByRole("button", { name: "No thanks" }).press("Enter");
   await page.getByRole("radio", { name: "Dark" }).click({ force: true });
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 
