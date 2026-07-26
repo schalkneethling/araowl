@@ -37,16 +37,13 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // App shell + build output: precached by default via globPatterns.
-        // The bundled quiz data is fetched at runtime, not part of the
-        // build, so it needs its own runtime caching strategy.
-        runtimeCaching: [
-          {
-            urlPattern: /\/data\/quiz-index\.json$/,
-            handler: "StaleWhileRevalidate",
-            options: { cacheName: "quiz-data" },
-          },
-        ],
+        // App shell + build output: precached via globPatterns. Workbox's
+        // default set (js/wasm/css/html) omits JSON, so the bundled quiz data
+        // is added explicitly — precaching it at install time makes the quiz
+        // playable offline immediately, without first fetching it online by
+        // starting a quiz. It's a build artifact, so it updates atomically
+        // with each deploy via the autoUpdate service worker.
+        globPatterns: ["**/*.{js,wasm,css,html}", "data/quiz-index.json"],
       },
     }),
   ],

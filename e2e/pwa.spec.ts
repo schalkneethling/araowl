@@ -42,22 +42,9 @@ test.describe("PWA", () => {
     await page.reload();
     await page.waitForFunction(() => Boolean(navigator.serviceWorker.controller));
 
-    // quiz-index.json is only cached (StaleWhileRevalidate) once actually
-    // requested, so start the quiz once online to warm the runtime cache.
-    await startQuiz(page);
-    await page.reload();
-
-    // StaleWhileRevalidate writes to Cache Storage asynchronously, so the
-    // fetch above may still be in flight — wait until the cached response is
-    // observable before cutting the network, or the offline read can race.
-    await page.waitForFunction(
-      async () => {
-        const cache = await caches.open("quiz-data");
-        return Boolean(await cache.match("/data/quiz-index.json"));
-      },
-      { timeout: 15_000 },
-    );
-
+    // quiz-index.json is precached at service worker install (see
+    // vite.config.ts globPatterns), so the quiz is playable offline straight
+    // away — no need to warm a runtime cache by starting a quiz online first.
     await context.setOffline(true);
     try {
       await expect(page.locator("h1")).toContainText("AraOwl");
