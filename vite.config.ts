@@ -1,11 +1,17 @@
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
+import { varlockVitePlugin } from "@varlock/vite-integration";
 import react from "@vitejs/plugin-react";
 import { fileURLToPath, URL } from "node:url";
+import { ENV } from "varlock/env";
 import { defaultExclude, defineConfig } from "vite-plus";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   plugins: [
+    // First so .env.schema is loaded/validated before anything else runs;
+    // public vars become available via `import { ENV } from "varlock/env"`.
+    varlockVitePlugin(),
     react(),
     tailwindcss(),
     VitePWA({
@@ -44,9 +50,33 @@ export default defineConfig({
         // starting a quiz. It's a build artifact, so it updates atomically
         // with each deploy via the autoUpdate service worker.
         globPatterns: ["**/*.{js,wasm,css,html}", "data/quiz-index.json"],
+        // The SW is generated after the Sentry plugin's map cleanup and the
+        // browser SDK can't use worker maps anyway — without this, sw.js.map
+        // would be the one map file that still reached production.
+        sourcemap: false,
+      },
+    }),
+    // Last so it sees final build output. Uploads hidden source maps to
+    // Sentry, then deletes them from dist so maps are never deployed. Only
+    // active when the auth token resolved (APP_ENV=production builds); the
+    // org is inferred from the org auth token.
+    sentryVitePlugin({
+      project: "araowl",
+      authToken: ENV.SENTRY_AUTH_TOKEN,
+      disable: !ENV.SENTRY_AUTH_TOKEN,
+      telemetry: false,
+      sourcemaps: {
+        filesToDeleteAfterUpload: "dist/**/*.map",
       },
     }),
   ],
+  build: {
+    // Maps exist for Sentry only ("hidden": no sourceMappingURL comment in
+    // the served JS), so they are generated under the same predicate that
+    // enables the upload plugin — tokenless builds (dev, e2e, VRT) emit none,
+    // and uploads always delete them from dist afterwards.
+    sourcemap: ENV.SENTRY_AUTH_TOKEN ? "hidden" : false,
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("src", import.meta.url)),

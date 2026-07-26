@@ -1,4 +1,7 @@
 allowBuilds:
+  # sentry-cli downloads its binary in postinstall; the vite plugin shells out
+  # to it for source-map upload
+  "@sentry/cli": true
   esbuild: true
   sharp: true
   workerd: true

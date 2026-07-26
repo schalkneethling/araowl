@@ -12,26 +12,45 @@ export type CoercedEnvSchema = {
 
   /**
    * **CF_ACCOUNT_ID**
-   * Cloudflare account ID, used by scripts/generate-quiz-index.ts
+   * Cloudflare account ID, used by scripts/generate-quiz-index.ts (Phase 3 —
+   * nothing consumes it yet; restore @required when that script lands)
    * ![icon](data:image/svg+xml;utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20fill%3D%22%23808080%22%20d%3D%22M29%2022h-5a2.003%202.003%200%200%201-2-2v-6a2%202%200%200%201%202-2h5v2h-5v6h5ZM18%2012h-4V8h-2v14h6a2.003%202.003%200%200%200%202-2v-6a2%202%200%200%200-2-2m-4%208v-6h4v6Zm-6-8H3v2h5v2H4a2%202%200%200%200-2%202v2a2%202%200%200%200%202%202h6v-8a2%202%200%200%200-2-2m0%208H4v-2h4Z%22%2F%3E%3C%2Fsvg%3E)
    */
-  CF_ACCOUNT_ID: string;
+  CF_ACCOUNT_ID?: string;
 
   /**
    * **CLOUDFLARE_AI_TOKEN** 🔐 _sensitive_
    * Cloudflare API token (Workers AI Read + Edit); build-time only — deployed
-   * Functions use the AI binding instead
+   * Functions use the AI binding instead. Not @required until Phase 3 consumes it.
    * ![icon](data:image/svg+xml;utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20fill%3D%22%23808080%22%20d%3D%22M29%2022h-5a2.003%202.003%200%200%201-2-2v-6a2%202%200%200%201%202-2h5v2h-5v6h5ZM18%2012h-4V8h-2v14h6a2.003%202.003%200%200%200%202-2v-6a2%202%200%200%200-2-2m-4%208v-6h4v6Zm-6-8H3v2h5v2H4a2%202%200%200%200-2%202v2a2%202%200%200%200%202%202h6v-8a2%202%200%200%200-2-2m0%208H4v-2h4Z%22%2F%3E%3C%2Fsvg%3E)
    */
-  CLOUDFLARE_AI_TOKEN: string;
+  CLOUDFLARE_AI_TOKEN?: string;
+
+  /**
+   * **SENTRY_DSN**
+   * Sentry DSN for the browser project (org o4509032586870784, project araowl).
+   * Deliberately public: DSNs ship in the client bundle by design and only
+   * permit event submission, not data access.
+   * ![icon](data:image/svg+xml;utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20fill%3D%22%23808080%22%20d%3D%22M29%2022h-5a2.003%202.003%200%200%201-2-2v-6a2%202%200%200%201%202-2h5v2h-5v6h5ZM18%2012h-4V8h-2v14h6a2.003%202.003%200%200%200%202-2v-6a2%202%200%200%200-2-2m-4%208v-6h4v6Zm-6-8H3v2h5v2H4a2%202%200%200%200-2%202v2a2%202%200%200%200%202%202h6v-8a2%202%200%200%200-2-2m0%208H4v-2h4Z%22%2F%3E%3C%2Fsvg%3E)
+   */
+  SENTRY_DSN?: string;
+
+  /**
+   * **SENTRY_AUTH_TOKEN** 🔐 _sensitive_
+   * Sentry organization auth token for source-map upload at build time. Empty
+   * outside production builds, so the upload plugin is disabled for local dev,
+   * e2e, and the VRT container; deployed CI provides it directly as an env var.
+   * ![icon](data:image/svg+xml;utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20fill%3D%22%23808080%22%20d%3D%22M29%2022h-5a2.003%202.003%200%200%201-2-2v-6a2%202%200%200%201%202-2h5v2h-5v6h5ZM18%2012h-4V8h-2v14h6a2.003%202.003%200%200%200%202-2v-6a2%202%200%200%200-2-2m-4%208v-6h4v6Zm-6-8H3v2h5v2H4a2%202%200%200%200-2%202v2a2%202%200%200%200%202%202h6v-8a2%202%200%200%200-2-2m0%208H4v-2h4Z%22%2F%3E%3C%2Fsvg%3E)
+   */
+  SENTRY_AUTH_TOKEN?: string;
 };
 
-type _CoercedEnvSchema_1f894481 = CoercedEnvSchema;
+type _CoercedEnvSchema_8c8315cb = CoercedEnvSchema;
 
 declare module "varlock/env" {
-  export interface TypedEnvSchema extends Readonly<_CoercedEnvSchema_1f894481> {}
+  export interface TypedEnvSchema extends Readonly<_CoercedEnvSchema_8c8315cb> {}
   export interface PublicTypedEnvSchema extends Readonly<
-    Pick<_CoercedEnvSchema_1f894481, "APP_ENV" | "CF_ACCOUNT_ID">
+    Pick<_CoercedEnvSchema_8c8315cb, "APP_ENV" | "CF_ACCOUNT_ID" | "SENTRY_DSN">
   > {}
 }
 
@@ -43,16 +62,16 @@ export type EnvSchemaAsStrings = {
       : string;
 };
 
-type _EnvSchemaAsStrings_1f894481 = EnvSchemaAsStrings;
+type _EnvSchemaAsStrings_8c8315cb = EnvSchemaAsStrings;
 declare global {
   // add types for global import.meta.env
-  interface ImportMetaEnv extends _EnvSchemaAsStrings_1f894481 {}
+  interface ImportMetaEnv extends _EnvSchemaAsStrings_8c8315cb {}
   interface ImportMeta {
     readonly env: ImportMetaEnv;
   }
 
   // add types for global process.env
   namespace NodeJS {
-    interface ProcessEnv extends _EnvSchemaAsStrings_1f894481 {}
+    interface ProcessEnv extends _EnvSchemaAsStrings_8c8315cb {}
   }
 }
