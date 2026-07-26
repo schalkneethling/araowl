@@ -62,4 +62,22 @@ describe.each(factories)("%s (ScoreStore contract)", (_name, create) => {
     await store.clear();
     expect(await store.listAttempts()).toEqual([]);
   });
+
+  it("deletes only the targeted attempt", async () => {
+    await store.saveAttempt(attempt("keep", "2026-07-19T00:01:00.000Z"));
+    await store.saveAttempt(attempt("remove", "2026-07-19T00:05:00.000Z"));
+
+    await store.deleteAttempt("remove");
+
+    const ids = (await store.listAttempts()).map((a) => a.id);
+    expect(ids).toEqual(["keep"]);
+  });
+
+  it("treats deleting a nonexistent id as a no-op", async () => {
+    await store.saveAttempt(attempt("a1", "2026-07-19T00:01:00.000Z"));
+
+    await store.deleteAttempt("missing");
+
+    expect(await store.listAttempts()).toHaveLength(1);
+  });
 });

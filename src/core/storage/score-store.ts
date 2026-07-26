@@ -9,6 +9,8 @@ export interface ScoreStore {
   saveAttempt(attempt: QuizAttempt): Promise<void>;
   /** All attempts, newest first (by `finishedAt`). */
   listAttempts(): Promise<QuizAttempt[]>;
+  /** Remove one attempt by `id`; unknown ids are a no-op. */
+  deleteAttempt(id: string): Promise<void>;
   /** Remove every stored attempt. */
   clear(): Promise<void>;
   /** Release held resources (e.g. an open database connection). Optional. */

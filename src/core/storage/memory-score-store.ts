@@ -17,6 +17,11 @@ export class MemoryScoreStore implements ScoreStore {
     return Promise.resolve(sorted);
   }
 
+  deleteAttempt(id: string): Promise<void> {
+    this.attempts.delete(id);
+    return Promise.resolve();
+  }
+
   clear(): Promise<void> {
     this.attempts.clear();
     return Promise.resolve();

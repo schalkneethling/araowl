@@ -50,7 +50,10 @@ test.describe("analytics consent", () => {
     await page.goto("/");
     // Keyboard-only: every input method is first-class.
     await page.getByRole("button", { name: "No thanks" }).press("Enter");
-    await expect(page.getByRole("status")).toHaveText("Analytics disabled.");
+    // Scoped: the score history aside owns a second status region.
+    await expect(page.locator("#consent-root").getByRole("status")).toHaveText(
+      "Analytics disabled.",
+    );
     await expect(page.getByRole("button", { name: "Allow analytics" })).toHaveCount(0);
 
     await page.reload();
@@ -67,7 +70,9 @@ test.describe("analytics consent", () => {
 
     await page.goto("/");
     await page.getByRole("button", { name: "Allow analytics" }).press("Enter");
-    await expect(page.getByRole("status")).toHaveText("Analytics enabled.");
+    await expect(page.locator("#consent-root").getByRole("status")).toHaveText(
+      "Analytics enabled.",
+    );
     await expect.poll(() => requests.length).toBe(1);
     expect(requests[0]).toContain("analytics.js");
 

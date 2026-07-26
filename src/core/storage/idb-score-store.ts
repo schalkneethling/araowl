@@ -64,6 +64,11 @@ export class IdbScoreStore implements ScoreStore {
     return ascending.reverse();
   }
 
+  async deleteAttempt(id: string): Promise<void> {
+    const db = await this.db();
+    await db.delete(STORE, id);
+  }
+
   async clear(): Promise<void> {
     const db = await this.db();
     await db.clear(STORE);
