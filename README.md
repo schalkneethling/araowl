@@ -2,8 +2,8 @@
 
 Test and retain your web development knowledge with quizzes built straight from
 [MDN Web Docs](https://developer.mozilla.org/). Study anywhere — quizzes work
-fully offline as an installable PWA — and build custom AI-generated quizzes on
-the topics you care about: HTML, CSS, JavaScript, Web APIs, and Accessibility.
+fully offline as an installable PWA — covering HTML, CSS, JavaScript, Web APIs,
+and Accessibility.
 
 > **Status:** work in progress, built in reviewable phases. This README grows
 > with the project; full setup and deployment docs land with the final phase.
