@@ -85,10 +85,17 @@ export function QuizApp() {
         return [];
       });
       // An exhausted sequential set starts a fresh cycle at the next quiz.
+      // Same never-a-gate rule as above: a failing reset or re-read degrades
+      // to fresh-profile selection instead of blocking the quiz.
       if (settings.mode === "sequential" && isCycleExhausted(index.questions, progress)) {
-        await progressStore.resetCycle();
-        progress = await progressStore.getProgress();
-        setHistoryVersion((version) => version + 1);
+        try {
+          await progressStore.resetCycle();
+          progress = await progressStore.getProgress();
+          setHistoryVersion((version) => version + 1);
+        } catch (error) {
+          console.error("Failed to reset the question cycle", error);
+          progress = [];
+        }
       }
       const questions = selectQuestions(index.questions, {
         size: settings.size,
