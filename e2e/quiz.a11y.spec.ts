@@ -8,6 +8,7 @@ import {
   loadQuizQuestions,
   resetClientState,
   startQuiz,
+  TOTAL_QUESTIONS,
   type QuizQuestionData,
 } from "./helpers/quiz.ts";
 
@@ -144,7 +145,7 @@ test("active question with hints and feedback has no violations", async ({
 });
 
 test("results view has no violations", async ({ page, makeAxeBuilder }, testInfo) => {
-  await completeQuiz(page, questions.slice(0, 10), (question) => question.answerIndex);
+  await completeQuiz(page, questions.slice(0, TOTAL_QUESTIONS), (question) => question.answerIndex);
   await expect(page.getByText("10 / 10", { exact: true })).toBeVisible();
 
   await expectAccessible(makeAxeBuilder, testInfo);
