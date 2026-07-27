@@ -1,5 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
-import { completeQuiz, loadQuizQuestions, resetClientState } from "./helpers/quiz.ts";
+import {
+  completeQuiz,
+  loadQuizQuestions,
+  resetClientState,
+  TOTAL_QUESTIONS,
+} from "./helpers/quiz.ts";
 
 // Matches any Sentry host (o<org>.ingest.<region>.sentry.io etc.) so the
 // tests hold even if the DSN or region changes.
@@ -31,7 +36,7 @@ test.describe("sentry", () => {
 
     await resetClientState(page);
     const questions = await loadQuizQuestions();
-    await completeQuiz(page, questions, () => 0);
+    await completeQuiz(page, questions.slice(0, TOTAL_QUESTIONS), () => 0);
 
     // Errors-only monitoring: a healthy session must produce zero Sentry
     // traffic (no sessions, no tracing, no replay).
