@@ -119,9 +119,12 @@ CSP violations in built output.
 
 Each release is deployed manually with wrangler. Production builds must run
 with `APP_ENV=production` so varlock loads [`.env.production`](.env.production)
-and resolves the 1Password references (desktop app locally; an `OP_TOKEN`
-service account in CI later) — this is also what enables Sentry source-map
-upload.
+and resolves the 1Password references via the desktop app — this is also what
+enables Sentry source-map upload. CI never needs 1Password: the only secret
+any build uses is `SENTRY_AUTH_TOKEN`, and a real environment variable takes
+precedence over the `op://` reference, so CI sets it directly as a CI secret.
+(The `OP_TOKEN` service-account hook in `.env.schema` exists as an optional
+alternative, not a requirement.)
 
 ```sh
 APP_ENV=production pnpm run build   # typecheck + build + source maps + _headers
