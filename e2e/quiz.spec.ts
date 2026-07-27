@@ -10,9 +10,15 @@ import {
 } from "./helpers/quiz.ts";
 
 let questions: QuizQuestionData[];
+// Sequential default: round one serves the first TOTAL_QUESTIONS manifest
+// entries; a second consecutive round serves the next ten (no resurfacing).
+let roundOne: QuizQuestionData[];
+let roundTwo: QuizQuestionData[];
 
 test.beforeAll(async () => {
   questions = await loadQuizQuestions();
+  roundOne = questions.slice(0, TOTAL_QUESTIONS);
+  roundTwo = questions.slice(TOTAL_QUESTIONS, TOTAL_QUESTIONS * 2);
 });
 
 test.beforeEach(async ({ page }) => {
@@ -25,7 +31,7 @@ test.describe("quiz island", () => {
 
     let expectedCorrect = 0;
 
-    for (const [index, question] of questions.entries()) {
+    for (const [index, question] of roundOne.entries()) {
       const questionNumber = index + 1;
       await expect(
         page.getByText(`Question ${questionNumber} of ${TOTAL_QUESTIONS}`),
@@ -94,13 +100,13 @@ test.describe("quiz island", () => {
   });
 
   test("scores an all-first-option run to match the bundled manifest", async ({ page }) => {
-    const expectedScore = questions.filter((question) => question.answerIndex === 0).length;
-    const htmlQuestions = questions.filter((question) => question.topic === "html");
+    const expectedScore = roundOne.filter((question) => question.answerIndex === 0).length;
+    const htmlQuestions = roundOne.filter((question) => question.topic === "html");
     const expectedHtmlCorrect = htmlQuestions.filter(
       (question) => question.answerIndex === 0,
     ).length;
 
-    await completeQuiz(page, questions, () => 0);
+    await completeQuiz(page, roundOne, () => 0);
 
     await expect(
       page.getByText(`${expectedScore} / ${TOTAL_QUESTIONS}`, { exact: true }),
@@ -117,7 +123,7 @@ test.describe("quiz island", () => {
 
   test("persists attempts to score history across reloads, newest first", async ({ page }) => {
     // First run: all correct -> 10 / 10.
-    await completeQuiz(page, questions, (question) => question.answerIndex);
+    await completeQuiz(page, roundOne, (question) => question.answerIndex);
     await expect(page.getByText(`${TOTAL_QUESTIONS} / ${TOTAL_QUESTIONS}`)).toBeVisible();
     await expect.poll(() => countStoredAttempts(page)).toBe(1);
 
@@ -132,7 +138,7 @@ test.describe("quiz island", () => {
     await expect(items.first()).toContainText(String(new Date().getFullYear()));
 
     // Second run: always one past the correct option -> 0 / 10.
-    await completeQuiz(page, questions, (question) => (question.answerIndex + 1) % 4);
+    await completeQuiz(page, roundTwo, (question) => (question.answerIndex + 1) % 4);
     await expect.poll(() => countStoredAttempts(page)).toBe(2);
     await page.getByRole("button", { name: "Try again" }).press("Enter");
 

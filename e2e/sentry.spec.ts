@@ -31,7 +31,7 @@ test.describe("sentry", () => {
 
     await resetClientState(page);
     const questions = await loadQuizQuestions();
-    await completeQuiz(page, questions, () => 0);
+    await completeQuiz(page, questions.slice(0, 10), () => 0);
 
     // Errors-only monitoring: a healthy session must produce zero Sentry
     // traffic (no sessions, no tracing, no replay).

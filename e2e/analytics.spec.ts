@@ -81,8 +81,9 @@ test.describe("analytics consent", () => {
     await expect.poll(() => requests.length).toBe(2);
 
     const questions = await loadQuizQuestions();
-    const expectedScore = questions.filter((question) => question.answerIndex === 0).length;
-    await completeQuiz(page, questions, () => 0);
+    const roundOne = questions.slice(0, TOTAL_QUESTIONS);
+    const expectedScore = roundOne.filter((question) => question.answerIndex === 0).length;
+    await completeQuiz(page, roundOne, () => 0);
 
     const calls = await readTrackCalls(page);
     expect(calls).toContainEqual({ name: "quiz-started", data: { source: "bundled" } });
@@ -105,7 +106,7 @@ test.describe("analytics consent", () => {
     await page.goto("/");
     await page.getByRole("button", { name: "Allow analytics" }).press("Enter");
     const questions = await loadQuizQuestions();
-    await completeQuiz(page, questions, () => 0);
+    await completeQuiz(page, questions.slice(0, TOTAL_QUESTIONS), () => 0);
 
     const violations = await page.evaluate(
       () => (window as { __cspViolations?: string[] }).__cspViolations ?? [],

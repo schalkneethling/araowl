@@ -9,19 +9,23 @@ import {
 } from "./helpers/quiz.ts";
 
 let questions: QuizQuestionData[];
+let roundOne: QuizQuestionData[];
+let roundTwo: QuizQuestionData[];
 
 test.beforeAll(async () => {
   questions = await loadQuizQuestions();
+  roundOne = questions.slice(0, TOTAL_QUESTIONS);
+  roundTwo = questions.slice(TOTAL_QUESTIONS, TOTAL_QUESTIONS * 2);
 });
 
 // Two attempts with distinct scores: all-correct first (older), all-wrong
 // second (newer) — history lists newest first, so rows are 0/10 then 10/10.
 test.beforeEach(async ({ page }) => {
   await resetClientState(page);
-  await completeQuiz(page, questions, (question) => question.answerIndex);
+  await completeQuiz(page, roundOne, (question) => question.answerIndex);
   await expect.poll(() => countStoredAttempts(page)).toBe(1);
   await page.getByRole("button", { name: "Try again" }).press("Enter");
-  await completeQuiz(page, questions, (question) => (question.answerIndex + 1) % 4);
+  await completeQuiz(page, roundTwo, (question) => (question.answerIndex + 1) % 4);
   await expect.poll(() => countStoredAttempts(page)).toBe(2);
   await page.getByRole("button", { name: "Try again" }).press("Enter");
 });

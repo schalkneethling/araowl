@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-19T17:58:24.000Z",
+  "generatedAt": "2026-07-27T00:00:00.000Z",
   "source": "bundled",
   "questions": [
     {
@@ -182,6 +182,695 @@
       ],
       "explanation": ":focus-visible applies while an element matches :focus and the user agent determines, via heuristics, that a focus indicator should be shown, commonly leading browsers to show a focus ring for keyboard interaction but not for mouse clicks.",
       "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:focus-visible"
+    },
+    {
+      "id": "launch-javascript-01",
+      "topic": "javascript",
+      "question": "Inside a block, you read a let variable on the line before its declaration. What happens?",
+      "options": [
+        "A ReferenceError is thrown",
+        "It evaluates to undefined",
+        "It evaluates to null",
+        "The declaration is hoisted with its value"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "let variables sit in the temporal dead zone until their declaration runs.",
+        "var behaves differently — it would give undefined."
+      ],
+      "explanation": "From the start of the block until execution reaches the declaration, a let variable is in the temporal dead zone; any access throws a ReferenceError. This differs from var, which yields undefined when accessed before its declaration.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let"
+    },
+    {
+      "id": "launch-javascript-02",
+      "topic": "javascript",
+      "question": "One of the five promises passed to Promise.all() rejects. What does the returned promise do?",
+      "options": [
+        "Rejects immediately with that first rejection reason",
+        "Waits for all five to settle, then rejects with an array of errors",
+        "Fulfills with the four successful values",
+        "Fulfills with null in the rejected promise's position"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "Promise.all is fail-fast.",
+        "A different combinator, Promise.allSettled, waits for every outcome."
+      ],
+      "explanation": "Promise.all rejects when any of the input promises rejects, with that first rejection reason — it does not wait for the others. It fulfills only when all inputs fulfill, with an array of their values in order.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all"
+    },
+    {
+      "id": "launch-javascript-03",
+      "topic": "javascript",
+      "question": "What does [5, 12, 8].at(-1) return?",
+      "options": ["8", "5", "undefined", "An error — negative indexes are invalid"],
+      "answerIndex": 0,
+      "hints": ["at() accepts negative integers.", "They count back from the last item."],
+      "explanation": "Array.prototype.at() accepts negative integers, which count back from the last item — so at(-1) returns the final element, 8. Truly out-of-range indexes return undefined instead of throwing.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/at"
+    },
+    {
+      "id": "launch-css-01",
+      "topic": "css",
+      "question": "How much specificity does the :where() pseudo-class contribute to a selector?",
+      "options": [
+        "Always zero",
+        "The specificity of its most specific argument",
+        "One class-level of specificity",
+        "The same as an id selector"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        ":is() behaves differently from :where() here.",
+        "This difference is why :where() is popular in CSS resets."
+      ],
+      "explanation": ":where() always has zero specificity, whereas :is() takes on the specificity of its most specific argument. That makes :where() ideal for base styles that later rules should override easily.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:where"
+    },
+    {
+      "id": "launch-css-02",
+      "topic": "css",
+      "question": "An element with position: sticky scrolls normally and never sticks. What is the most likely cause?",
+      "options": [
+        "No inset property (like top) is set to a non-auto value",
+        "The element is missing a z-index",
+        "Its parent is missing overflow: hidden",
+        "Sticky only works on table elements"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "Sticky needs a threshold that tells it where to stick.",
+        "Without one, MDN says sticky behaves like another position value."
+      ],
+      "explanation": "At least one inset property (top, right, bottom, left, or a logical equivalent) must be non-auto on the sticky axis. If both inset properties for an axis are auto, sticky behaves as relative on that axis — the classic cause of a sticky element that never sticks.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position"
+    },
+    {
+      "id": "launch-web-apis-01",
+      "topic": "web-apis",
+      "question": "A fetch() was given an AbortSignal, and the controller's abort() is called mid-request. How does the fetch promise settle?",
+      "options": [
+        "It rejects with a DOMException named AbortError",
+        "It resolves with response.ok set to false",
+        "It resolves with undefined",
+        "It stays pending forever"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "Aborting is an error path, not a success path.",
+        "The rejection carries a specifically-named DOMException."
+      ],
+      "explanation": "When abort() is called, the fetch() promise rejects with a DOMException named AbortError — code handling aborts should catch it and distinguish it from network failures.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal"
+    },
+    {
+      "id": "launch-web-apis-02",
+      "topic": "web-apis",
+      "question": "Which storage survives a page reload but is cleared when its tab closes, and is not shared with other tabs?",
+      "options": ["sessionStorage", "localStorage", "IndexedDB", "Cookies without an expiry"],
+      "answerIndex": 0,
+      "hints": [
+        "A page session lasts as long as the tab is open.",
+        "The storage in question is partitioned by origin and tab."
+      ],
+      "explanation": "sessionStorage data lasts for the page session: it survives reloads and restores, but closing the tab ends the session and clears it, and it is partitioned per tab — unlike localStorage, which persists and is shared across all same-origin tabs.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage"
+    },
+    {
+      "id": "launch-html-01",
+      "topic": "html",
+      "question": "A <button> element inside a <form> has no type attribute. What happens when it is clicked?",
+      "options": [
+        "It submits the form data",
+        "It does nothing until a type is set",
+        "It resets the form to its initial values",
+        "It only fires its click handler, never affecting the form"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "The default depends on whether the button is associated with a form.",
+        "MDN's notes warn to set type=\"button\" on buttons that shouldn't submit."
+      ],
+      "explanation": "For buttons associated with a form, type defaults to submit when the attribute is missing, empty, or invalid — so clicking submits the form. Give non-submitting buttons an explicit type=\"button\" to avoid accidental submissions.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button"
+    },
+    {
+      "id": "launch-html-02",
+      "topic": "html",
+      "question": "What happens to the markup nested inside a <template> element when the page loads?",
+      "options": [
+        "It is not rendered; it is held in a DocumentFragment exposed by the template's content property",
+        "It renders immediately like any other markup",
+        "It renders but is hidden with display: none",
+        "It is moved to the end of <body> automatically"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "The element's content is deliberately not shown by default.",
+        "A read-only property on HTMLTemplateElement exposes the subtree."
+      ],
+      "explanation": "A template's content is not rendered by default, and the nested markup does not become regular children of the element — it lives in a DocumentFragment exposed by the read-only content property, ready to be cloned into the document with JavaScript.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/template"
+    },
+    {
+      "id": "launch-accessibility-01",
+      "topic": "accessibility",
+      "question": "What does aria-hidden=\"true\" actually change about an element?",
+      "options": [
+        "It removes the element and its children from the accessibility tree; visual rendering is unchanged",
+        "It visually hides the element like display: none",
+        "It hides it both visually and from assistive technology",
+        "Nothing, unless CSS also hides it"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "Screen reader users and sighted users end up with different experiences.",
+        "MDN warns against putting it on focusable elements."
+      ],
+      "explanation": "aria-hidden=\"true\" hides content from assistive technology by removing the element and all its children from the accessibility tree, while changing nothing visually. Never place it on (or above) focusable elements — hidden-but-focusable content is a trap.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-hidden"
+    },
+    {
+      "id": "launch-javascript-04",
+      "topic": "javascript",
+      "question": "What does typeof null evaluate to, and why?",
+      "options": [
+        "\"object\", due to a bug preserved from the first JavaScript implementation",
+        "\"null\", matching its primitive type",
+        "\"undefined\", because null has no type",
+        "\"object\" only in non-strict mode"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "The answer surprises almost everyone the first time.",
+        "It traces back to how values were tagged in the original engine."
+      ],
+      "explanation": "typeof null returns \"object\": in the first JavaScript implementation values carried a type tag, objects used tag 0, and null was the NULL pointer — so it read as an object. A fix making typeof null === \"null\" was proposed for ECMAScript and rejected.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof"
+    },
+    {
+      "id": "launch-javascript-05",
+      "topic": "javascript",
+      "question": "const qty = 0; console.log(qty ?? 42, qty || 42); — what is logged?",
+      "options": ["0 42", "42 42", "0 0", "42 0"],
+      "answerIndex": 0,
+      "hints": [
+        "?? only falls back for null and undefined.",
+        "|| falls back for any falsy value, and 0 is falsy."
+      ],
+      "explanation": "The nullish coalescing operator returns its right-hand side only when the left is null or undefined, so 0 ?? 42 preserves the 0. Logical OR returns the right side for any falsy left operand, so 0 || 42 yields 42.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing"
+    },
+    {
+      "id": "launch-javascript-06",
+      "topic": "javascript",
+      "question": "When does a callback scheduled with queueMicrotask() run?",
+      "options": [
+        "After the current task completes, before control returns to the event loop",
+        "Immediately, interrupting the current code",
+        "On the next animation frame",
+        "After all pending timers have fired"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "Microtasks drain before the browser regains control.",
+        "That is earlier than any timer callback can run."
+      ],
+      "explanation": "A microtask runs after the current task has completed its work and there is no other code waiting to run — before control of the execution context returns to the browser's event loop. That places it ahead of anything scheduled as a new task, like timer callbacks.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/API/Window/queueMicrotask"
+    },
+    {
+      "id": "launch-css-03",
+      "topic": "css",
+      "question": "When does the aspect-ratio property actually affect an element's dimensions?",
+      "options": [
+        "When at least one of the element's sizes is automatic",
+        "Always, overriding width and height",
+        "Only on replaced elements like images",
+        "Only when both width and height are set explicitly"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "The ratio participates in the calculation of auto sizes.",
+        "With both dimensions fixed, there is nothing left for the ratio to decide."
+      ],
+      "explanation": "aspect-ratio defines a preferred width-to-height ratio used when calculating auto sizes. At least one of the box's sizes must be automatic — if neither width nor height is automatic, the provided ratio has no effect on the box's preferred sizes.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/aspect-ratio"
+    },
+    {
+      "id": "launch-css-04",
+      "topic": "css",
+      "question": "In a default horizontal, left-to-right document, which physical properties does margin-inline set?",
+      "options": [
+        "margin-left and margin-right",
+        "margin-top and margin-bottom",
+        "All four margins",
+        "No physical margins — it is purely virtual"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "Inline is the axis text flows along.",
+        "The mapping depends on writing-mode, direction, and text-orientation."
+      ],
+      "explanation": "margin-inline is a logical shorthand for the inline start and end margins. Its physical mapping depends on writing-mode, direction, and text-orientation; in a default horizontal LTR document it corresponds to margin-left and margin-right.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/margin-inline"
+    },
+    {
+      "id": "launch-web-apis-03",
+      "topic": "web-apis",
+      "question": "Which baseline condition must be met before the async Clipboard API is available at all?",
+      "options": [
+        "A secure context (HTTPS)",
+        "A registered service worker",
+        "A user gesture within the last 10 minutes",
+        "The page must be installed as a PWA"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "The API is gated the same way service workers are.",
+        "Reading additionally requires recent user interaction."
+      ],
+      "explanation": "The Clipboard API reads and writes the system clipboard only in secure contexts (HTTPS). On top of that, reading expects recent user interaction (transient activation) and writing may require the clipboard-write permission — but without a secure context there is no API at all.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API"
+    },
+    {
+      "id": "launch-web-apis-04",
+      "topic": "web-apis",
+      "question": "fetch() receives a 404 response from the server. What happens to the promise?",
+      "options": [
+        "It resolves normally, and response.ok is false",
+        "It rejects with a NotFound error",
+        "It resolves with an empty body and ok true",
+        "It retries once, then rejects"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "fetch only rejects on network-level failures.",
+        "ok reflects a specific status range."
+      ],
+      "explanation": "A 404 does not reject fetch — the promise resolves, and response.ok is false because ok is true only for statuses in the 200–299 range. Code must check response.ok (or status) itself to treat HTTP errors as failures.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/API/Response/ok"
+    },
+    {
+      "id": "launch-html-03",
+      "topic": "html",
+      "question": "You write <details open=\"false\">…</details>. How does the browser render it?",
+      "options": [
+        "Expanded — the details are visible",
+        "Collapsed, because the value is false",
+        "It is treated as invalid markup and ignored",
+        "Collapsed on first load, expanded after interaction"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "open is a Boolean attribute.",
+        "For Boolean attributes, presence matters — not the value."
+      ],
+      "explanation": "open is a Boolean attribute: the details are shown whenever the attribute exists, regardless of its value, so open=\"false\" still shows them. To hide the details you must remove the attribute entirely.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/details"
+    },
+    {
+      "id": "launch-html-04",
+      "topic": "html",
+      "question": "What does loading=\"lazy\" on an <img> element do?",
+      "options": [
+        "Defers loading the image until it reaches a browser-calculated distance from the viewport",
+        "Loads a low-quality placeholder first, then the full image",
+        "Loads the image only after every other resource has finished",
+        "Blocks rendering until the image enters the viewport"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "The default value, eager, loads the image immediately.",
+        "The browser decides the distance threshold, not the author."
+      ],
+      "explanation": "loading=\"lazy\" defers fetching until the image reaches a distance from the viewport calculated by the browser, avoiding network and storage cost for images that may never be needed. The default, eager, loads immediately regardless of viewport position.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img"
+    },
+    {
+      "id": "launch-accessibility-02",
+      "topic": "accessibility",
+      "question": "What does alt=\"\" (an empty alt attribute) on an <img> convey?",
+      "options": [
+        "The image is not a key part of the content, and non-visual browsers may omit it",
+        "The alt text is missing and should be flagged as an error",
+        "Screen readers should announce the file name instead",
+        "The image failed to load"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "An empty alt is a deliberate statement, not an omission.",
+        "Visual browsers also hide the broken-image icon for it."
+      ],
+      "explanation": "alt=\"\" declares the image is not a key part of the content — decoration or a tracking pixel — so non-visual browsers may omit it from rendering. That is different from a missing alt attribute, which leaves assistive technology with nothing useful.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img"
+    },
+    {
+      "id": "launch-javascript-07",
+      "topic": "javascript",
+      "question": "Which values can be used as keys in a Map?",
+      "options": [
+        "Any value, including objects and functions",
+        "Only strings",
+        "Only strings and symbols",
+        "Only primitives"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "This is a key difference from plain objects.",
+        "Object keys are limited to two types."
+      ],
+      "explanation": "Any value — both objects and primitive values — may be used as a Map key (or value). Plain Object keys must be a String or a Symbol; anything else is coerced to a string.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map"
+    },
+    {
+      "id": "launch-javascript-08",
+      "topic": "javascript",
+      "question": "What does [1, [2, [3]]].flat() return when called with no arguments?",
+      "options": ["[1, 2, [3]]", "[1, 2, 3]", "[[1], [2], [3]]", "[1, [2, [3]]] unchanged"],
+      "answerIndex": 0,
+      "hints": ["flat takes a depth parameter.", "Its default is not Infinity."],
+      "explanation": "flat()'s depth parameter defaults to 1, so only one level of nesting is flattened: [1, 2, [3]]. Pass a larger depth — or Infinity — to flatten deeper structures.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat"
+    },
+    {
+      "id": "launch-javascript-09",
+      "topic": "javascript",
+      "question": "const user = { name: \"Ara\" }; user.name = \"Owl\"; — what happens?",
+      "options": [
+        "The property updates; const only prevents reassigning the binding",
+        "A TypeError, because const values are immutable",
+        "A silent failure — the property keeps its old value",
+        "It works only in non-strict mode"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "const creates an immutable binding, not an immutable value.",
+        "Reassigning user itself is what would throw."
+      ],
+      "explanation": "const creates an immutable reference: the identifier cannot be reassigned, but the value it holds is not immutable — an object's properties can still be added, updated, or removed. Only reassigning user itself would throw.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const"
+    },
+    {
+      "id": "launch-css-05",
+      "topic": "css",
+      "question": "In a grid template, what does minmax(200px, 1fr) define for a track?",
+      "options": [
+        "A size range: at least 200px and at most 1fr",
+        "Exactly 200px unless the grid overflows",
+        "A track that is always 1fr with 200px of padding",
+        "The minimum gap between two tracks"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "The function name describes exactly what it clamps.",
+        "It is used with CSS grids."
+      ],
+      "explanation": "minmax() defines a size range greater than or equal to its minimum and less than or equal to its maximum, and is used with CSS grids — so the track stays at least 200px and can grow up to one fraction of the free space.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/minmax"
+    },
+    {
+      "id": "launch-css-06",
+      "topic": "css",
+      "question": "What does the currentcolor keyword resolve to?",
+      "options": [
+        "The value of the element's own color property",
+        "The nearest ancestor's background-color",
+        "The browser's default accent color",
+        "Always black unless overridden"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "It lets borders and backgrounds follow the text color.",
+        "On the color property itself, it takes the inherited value."
+      ],
+      "explanation": "currentcolor represents the value of the element's color property, letting other properties (like border or background) follow the text color. Used on the color property itself, it resolves to the inherited color value.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value"
+    },
+    {
+      "id": "launch-css-07",
+      "topic": "css",
+      "question": "What does the prefers-reduced-motion: reduce media feature detect?",
+      "options": [
+        "A device setting where the user asked to minimize non-essential motion",
+        "Automatic detection of a slow GPU",
+        "The device being in low-power mode",
+        "A viewport too small for animations"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "It reflects an explicit user preference, not device performance.",
+        "Respecting it matters for people with vestibular motion disorders."
+      ],
+      "explanation": "prefers-reduced-motion detects whether the user has enabled a device setting to minimize non-essential motion — conveying that they prefer an interface that removes, reduces, or replaces motion-based animations. reduce evaluates as true; no-preference as false.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion"
+    },
+    {
+      "id": "launch-web-apis-05",
+      "topic": "web-apis",
+      "question": "params.get(\"missing\") is called on a URLSearchParams with no such parameter. What is returned?",
+      "options": ["null", "undefined", "An empty string", "It throws a RangeError"],
+      "answerIndex": 0,
+      "hints": [
+        "get() returns the first value when the parameter exists.",
+        "The absent case mirrors Map-like APIs, not plain objects."
+      ],
+      "explanation": "URLSearchParams.get() returns the first value associated with the parameter, and null when the parameter is not found — not undefined or an empty string.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/get"
+    },
+    {
+      "id": "launch-web-apis-06",
+      "topic": "web-apis",
+      "question": "A page writes to localStorage. Where does the resulting storage event fire?",
+      "options": [
+        "In other same-origin browsing contexts — not in the window that made the change",
+        "In the window that made the change",
+        "In every open tab regardless of origin",
+        "Nowhere unless explicitly dispatched"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "The event exists so other contexts can react to changes.",
+        "The initiating window already knows what it did."
+      ],
+      "explanation": "The storage event fires when another document sharing the same storage area updates it — it is not fired on the window that made the change. For localStorage that means all other same-origin browsing contexts, including other tabs.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/API/Window/storage_event"
+    },
+    {
+      "id": "launch-html-05",
+      "topic": "html",
+      "question": "How do you connect an <input> to a <datalist> of suggestions?",
+      "options": [
+        "Set the input's list attribute to the datalist's id",
+        "Nest the input inside the datalist element",
+        "Add a for attribute on the datalist pointing at the input",
+        "Give both elements the same name attribute"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "The datalist needs a unique identifier.",
+        "An attribute on the input references that identifier."
+      ],
+      "explanation": "Give the datalist a unique id and set the input's list attribute to the same value. The datalist provides suggestions only — the control can still accept any value that passes validation, unlike a <select>.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/datalist"
+    },
+    {
+      "id": "launch-accessibility-03",
+      "topic": "accessibility",
+      "question": "When should a live region use aria-live=\"assertive\" instead of \"polite\"?",
+      "options": [
+        "Only when the interruption is imperative — time-critical information",
+        "Whenever you want users to notice the update",
+        "For all form validation messages",
+        "Never — assertive is deprecated"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "Assertive updates interrupt immediately and can clear the speech queue.",
+        "MDN's warning: interruptions may disorient users."
+      ],
+      "explanation": "assertive gives updates the highest priority and presents them immediately, potentially clearing the queue of previous updates. Because an interruption may disorient users or stop them completing their task, MDN warns not to use assertive unless the interruption is imperative — polite is right for most updates.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-live"
+    },
+    {
+      "id": "launch-javascript-10",
+      "topic": "javascript",
+      "question": "Why is Array.isArray(value) preferred over value instanceof Array?",
+      "options": [
+        "instanceof fails for arrays created in another realm, like an iframe",
+        "instanceof also matches array-like objects",
+        "Array.isArray is shorter to type, nothing more",
+        "instanceof throws for null values"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "Each realm has its own Array constructor identity.",
+        "typeof is no help either — it reports \"object\" for arrays."
+      ],
+      "explanation": "Array.isArray accepts Array objects constructed in another realm, while instanceof Array returns false for them because each realm has a different Array constructor identity. typeof is no alternative — it returns \"object\" for arrays.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray"
+    },
+    {
+      "id": "launch-javascript-11",
+      "topic": "javascript",
+      "question": "JSON.stringify({ a: undefined, b: [undefined] }) — what is produced?",
+      "options": [
+        "{\"b\":[null]}",
+        "{\"a\":null,\"b\":[null]}",
+        "{\"a\":undefined,\"b\":[undefined]}",
+        "A TypeError is thrown"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "undefined is not a valid JSON value.",
+        "The treatment differs between object properties and array elements."
+      ],
+      "explanation": "undefined, functions, and symbols are not valid JSON values: as object property values they are omitted entirely, while inside arrays they are changed to null — so the a property disappears and the array element becomes null.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify"
+    },
+    {
+      "id": "launch-javascript-12",
+      "topic": "javascript",
+      "question": "What does { once: true } do when passed to addEventListener?",
+      "options": [
+        "Invokes the listener at most once, removing it automatically after it fires",
+        "Ensures only one listener can ever exist for that event type",
+        "Fires the listener once per animation frame",
+        "Defers the listener to run after all others"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "The option affects the listener's lifetime.",
+        "No manual removeEventListener needed afterwards."
+      ],
+      "explanation": "With once: true the listener is invoked at most once after being added and is automatically removed when invoked — no manual removeEventListener required.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener"
+    },
+    {
+      "id": "launch-css-08",
+      "topic": "css",
+      "question": "Which selector styles a <section> only when it contains an element with class featured?",
+      "options": [
+        "section:has(.featured)",
+        "section .featured",
+        "section > .featured",
+        "section:contains(.featured)"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "You are selecting the parent, not the descendant.",
+        "One modern pseudo-class takes relative selectors as its argument."
+      ],
+      "explanation": ":has() represents an element if any of the relative selectors passed as its argument match when anchored against it — providing a way to select a parent (or preceding sibling) based on its contents, which plain descendant selectors cannot do.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:has"
+    },
+    {
+      "id": "launch-css-09",
+      "topic": "css",
+      "question": "What is the CSS rem unit relative to?",
+      "options": [
+        "The font-size of the root element",
+        "The font-size of the parent element",
+        "The element's own font-size",
+        "1% of the viewport width"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "The r stands for root.",
+        "em, by contrast, uses the element's own calculated font-size."
+      ],
+      "explanation": "rem represents the font-size of the root element (typically <html>), commonly 16px by browser default but adjustable by user preference. em instead represents the element's own calculated font-size, which is why nested em values compound while rem stays stable.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/length"
+    },
+    {
+      "id": "launch-css-10",
+      "topic": "css",
+      "question": "Before descendants of a card can respond to @container size queries, what must be set on the container element?",
+      "options": [
+        "container-type: inline-size (or size)",
+        "display: container",
+        "overflow: hidden",
+        "position: relative"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "The container must be established as a query container first.",
+        "One value queries the inline axis; another queries both dimensions."
+      ],
+      "explanation": "Size-based container queries require establishing a query container: container-type: inline-size establishes one for dimensional queries on the inline axis, and size for both inline and block dimensions. Without it, @container size queries have nothing to measure against.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/container-type"
+    },
+    {
+      "id": "launch-web-apis-07",
+      "topic": "web-apis",
+      "question": "You need to react when one specific element's box changes size — even if the viewport does not change. Which API fits?",
+      "options": [
+        "ResizeObserver",
+        "The window resize event",
+        "MutationObserver",
+        "IntersectionObserver"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "Window resize only reflects viewport changes.",
+        "The right interface reports content- and border-box dimension changes."
+      ],
+      "explanation": "ResizeObserver reports changes to the dimensions of an element's content or border box, responding to element size changes even when they have nothing to do with the viewport — which the window resize event cannot do.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver"
+    },
+    {
+      "id": "launch-web-apis-08",
+      "topic": "web-apis",
+      "question": "Which statement about service workers is true?",
+      "options": [
+        "They run in a worker context on a separate thread and have no DOM access",
+        "They can read and modify the DOM directly",
+        "They run on the main thread between tasks",
+        "They work on any HTTP page"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "They are designed to be fully asynchronous.",
+        "They are also restricted to secure contexts (with a localhost exception)."
+      ],
+      "explanation": "Service workers run in a worker context: no DOM access, on a different thread from the main JavaScript, non-blocking and fully asynchronous. They are also limited to secure contexts — HTTPS, with http://localhost treated as secure for development.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API"
+    },
+    {
+      "id": "launch-html-06",
+      "topic": "html",
+      "question": "What does inputmode=\"numeric\" on an input actually do?",
+      "options": [
+        "Hints the browser to show a numeric virtual keyboard, without enforcing any validation",
+        "Restricts the field so only digits can be typed",
+        "Validates the value as a number on form submission",
+        "Converts the submitted value to a Number type"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "It is a hint about which virtual keyboard to display.",
+        "MDN notes it doesn't cause any validity requirements to be enforced."
+      ],
+      "explanation": "inputmode hints at the kind of data expected so browsers can show a fitting virtual keyboard — numeric shows a digits keyboard. It enforces nothing: MDN states the attribute doesn't cause any validity requirements to be enforced on input.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/inputmode"
+    },
+    {
+      "id": "launch-accessibility-04",
+      "topic": "accessibility",
+      "question": "You give a <div> role=\"button\" and a click handler. What must you add for keyboard users?",
+      "options": [
+        "Key event handlers that activate it on Enter and Space (and make it focusable)",
+        "Nothing — role=\"button\" adds keyboard behavior",
+        "Only an Enter key handler; Space is optional",
+        "An aria-pressed attribute"
+      ],
+      "answerIndex": 0,
+      "hints": [
+        "role=\"button\" changes semantics, not behavior.",
+        "Native <button> elements provide all of this by default."
+      ],
+      "explanation": "With role=\"button\" on a non-button element, click handlers fire only for pointer clicks — separate key event handlers must be added so the control activates on Space and Enter (and it must be focusable). Native buttons provide keyboard and focus behavior by default, which is why MDN recommends them.",
+      "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/button_role"
     }
   ]
 }
