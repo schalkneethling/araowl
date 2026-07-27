@@ -158,9 +158,12 @@ assigned `pages.dev` hostname — copy the exact value from the Pages project
 overview in the Cloudflare dashboard (for this project name it is
 `araowl.pages.dev`). DNS stays on Netlify.
 
-**Recommended:** add a Cloudflare WAF rate-limiting rule for the domain —
-the site is static today, but the rule is in place before Phase 4 adds AI
-endpoints.
+**WAF rate limiting: deferred to Phase 4.** Rate-limiting rules attach to a
+Cloudflare zone, and this domain's DNS lives on Netlify (CNAME to Pages), so
+there is no zone to attach a rule to — and Release 1 is fully static, with
+nothing to rate-limit. Phase 4's AI endpoints will enforce limits at the
+Functions layer; if AraOwl becomes a paid product, a dedicated domain added
+directly to Cloudflare as a zone unlocks WAF/rate limiting properly.
 
 **Post-deploy smoke checks:** open the site → allow analytics → complete a
 quiz (pageview + `quiz-started`/`quiz-completed` in Umami); append
