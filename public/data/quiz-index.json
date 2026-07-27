@@ -347,7 +347,7 @@
         "Screen reader users and sighted users end up with different experiences.",
         "MDN warns against putting it on focusable elements."
       ],
-      "explanation": "aria-hidden=\"true\" hides content from assistive technology by removing the element and all its children from the accessibility tree, while changing nothing visually. Never place it on (or above) focusable elements — hidden-but-focusable content is a trap.",
+      "explanation": "aria-hidden=\"true\" hides content from assistive technology by removing the element and all its children from the accessibility tree, while changing nothing visually. It should not be used on focusable elements — and because children inherit, it should not be added to the parent or ancestor of a focusable element.",
       "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-hidden"
     },
     {
@@ -365,7 +365,7 @@
         "The answer surprises almost everyone the first time.",
         "It traces back to how values were tagged in the original engine."
       ],
-      "explanation": "typeof null returns \"object\": in the first JavaScript implementation values carried a type tag, objects used tag 0, and null was the NULL pointer — so it read as an object. A fix making typeof null === \"null\" was proposed for ECMAScript and rejected.",
+      "explanation": "In the first JavaScript implementation, values used a type tag plus a value. Objects used type tag 0, and null was stored as the NULL pointer (0x00), which also carried tag 0. As a result, typeof null has always returned \"object\". A fix making typeof null === \"null\" was proposed for ECMAScript and rejected.",
       "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof"
     },
     {
@@ -396,7 +396,7 @@
         "Microtasks drain before the browser regains control.",
         "That is earlier than any timer callback can run."
       ],
-      "explanation": "A microtask runs after the current task has completed its work and there is no other code waiting to run — before control of the execution context returns to the browser's event loop. That places it ahead of anything scheduled as a new task, like timer callbacks.",
+      "explanation": "Microtasks are executed after the current task completes, but before control is returned to the browser's event loop — so they run ahead of the next task, like a timer callback. Libraries and frameworks use them to batch work before the browser moves on.",
       "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/API/Window/queueMicrotask"
     },
     {
@@ -450,7 +450,7 @@
         "The API is gated the same way service workers are.",
         "Reading additionally requires recent user interaction."
       ],
-      "explanation": "The Clipboard API reads and writes the system clipboard only in secure contexts (HTTPS). On top of that, reading expects recent user interaction (transient activation) and writing may require the clipboard-write permission — but without a secure context there is no API at all.",
+      "explanation": "The Clipboard API reads and writes the system clipboard only in secure contexts (HTTPS). On top of that, reading expects recent user interaction (transient activation) and writing may require the clipboard-write permission.",
       "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API"
     },
     {
@@ -540,7 +540,7 @@
         "This is a key difference from plain objects.",
         "Object keys are limited to two types."
       ],
-      "explanation": "Any value — both objects and primitive values — may be used as a Map key (or value). Plain Object keys must be a String or a Symbol; anything else is coerced to a string.",
+      "explanation": "Both objects and primitive values may be used as Map keys (or values). Plain Object keys must be a String or a Symbol; anything else is coerced to a string.",
       "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map"
     },
     {
@@ -568,7 +568,7 @@
         "const creates an immutable binding, not an immutable value.",
         "Reassigning user itself is what would throw."
       ],
-      "explanation": "const creates an immutable reference: the identifier cannot be reassigned, but the value it holds is not immutable — an object's properties can still be added, updated, or removed. Only reassigning user itself would throw.",
+      "explanation": "const creates an immutable reference: the identifier cannot be reassigned, but the value it holds is not immutable. An object's properties can still be added, updated, or removed. Only reassigning user itself would throw.",
       "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const"
     },
     {
@@ -586,13 +586,13 @@
         "The function name describes exactly what it clamps.",
         "It is used with CSS grids."
       ],
-      "explanation": "minmax() defines a size range greater than or equal to its minimum and less than or equal to its maximum, and is used with CSS grids — so the track stays at least 200px and can grow up to one fraction of the free space.",
+      "explanation": "minmax() defines a size range greater than or equal to its minimum and less than or equal to its maximum. So, the track stays at least 200px and can expand to one fraction of the remaining free space.",
       "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/minmax"
     },
     {
       "id": "launch-css-06",
       "topic": "css",
-      "question": "What does the currentcolor keyword resolve to?",
+      "question": "What does the currentColor keyword resolve to?",
       "options": [
         "The value of the element's own color property",
         "The nearest ancestor's background-color",
@@ -604,7 +604,7 @@
         "It lets borders and backgrounds follow the text color.",
         "On the color property itself, it takes the inherited value."
       ],
-      "explanation": "currentcolor represents the value of the element's color property, letting other properties (like border or background) follow the text color. Used on the color property itself, it resolves to the inherited color value.",
+      "explanation": "currentColor represents the value of the element's color property, letting other properties (like border or background) follow the text color. Used on the color property itself, it resolves to the inherited color value. Inside an SVG it makes the graphic inherit its parent's color — commonly used for icons nested inside a link.",
       "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value"
     },
     {
@@ -635,7 +635,7 @@
         "get() returns the first value when the parameter exists.",
         "The absent case mirrors Map-like APIs, not plain objects."
       ],
-      "explanation": "URLSearchParams.get() returns the first value associated with the parameter, and null when the parameter is not found — not undefined or an empty string.",
+      "explanation": "URLSearchParams.get() returns the first value associated with the parameter, or null if the parameter is not found — not undefined or an empty string.",
       "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/get"
     },
     {
@@ -653,7 +653,7 @@
         "The event exists so other contexts can react to changes.",
         "The initiating window already knows what it did."
       ],
-      "explanation": "The storage event fires when another document sharing the same storage area updates it — it is not fired on the window that made the change. For localStorage that means all other same-origin browsing contexts, including other tabs.",
+      "explanation": "The Window storage event fires when another document that shares the same storage area (localStorage or sessionStorage) with the current window updates that storage. It does not fire in the window that performed the update. Unlike localStorage, whose storage event fires in all other same-origin tabs, the sessionStorage storage event fires only in browsing contexts within the current tab.",
       "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/API/Window/storage_event"
     },
     {
@@ -671,7 +671,7 @@
         "The datalist needs a unique identifier.",
         "An attribute on the input references that identifier."
       ],
-      "explanation": "Give the datalist a unique id and set the input's list attribute to the same value. The datalist provides suggestions only — the control can still accept any value that passes validation, unlike a <select>.",
+      "explanation": "Give the datalist a unique id and set the input's list attribute to the same value. The datalist provides suggestions only. The input can still accept any value that passes validation, unlike a <select>.",
       "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/datalist"
     },
     {
@@ -689,7 +689,7 @@
         "Assertive updates interrupt immediately and can clear the speech queue.",
         "MDN's warning: interruptions may disorient users."
       ],
-      "explanation": "assertive gives updates the highest priority and presents them immediately, potentially clearing the queue of previous updates. Because an interruption may disorient users or stop them completing their task, MDN warns not to use assertive unless the interruption is imperative — polite is right for most updates.",
+      "explanation": "assertive gives updates the highest priority and presents them immediately, potentially clearing the queue of previous updates. Because an interruption may disorient users or stop them completing their task, MDN warns not to use assertive unless the interruption is imperative.",
       "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-live"
     },
     {
@@ -707,7 +707,7 @@
         "Each realm has its own Array constructor identity.",
         "typeof is no help either — it reports \"object\" for arrays."
       ],
-      "explanation": "Array.isArray accepts Array objects constructed in another realm, while instanceof Array returns false for them because each realm has a different Array constructor identity. typeof is no alternative — it returns \"object\" for arrays.",
+      "explanation": "Array.isArray() rejects values that aren't true Array instances, even if their prototype chain includes Array.prototype, and it accepts arrays created in other realms (like iframes or workers). By contrast, instanceof Array returns true in the first case and false in the second, leading to both false positives and false negatives.",
       "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray"
     },
     {
@@ -743,7 +743,7 @@
         "The option affects the listener's lifetime.",
         "No manual removeEventListener needed afterwards."
       ],
-      "explanation": "With once: true the listener is invoked at most once after being added and is automatically removed when invoked — no manual removeEventListener required.",
+      "explanation": "With once: true, the listener is invoked at most once after being added and is automatically removed when invoked. No manual removeEventListener required.",
       "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener"
     },
     {
@@ -869,7 +869,7 @@
         "role=\"button\" changes semantics, not behavior.",
         "Native <button> elements provide all of this by default."
       ],
-      "explanation": "With role=\"button\" on a non-button element, click handlers fire only for pointer clicks — separate key event handlers must be added so the control activates on Space and Enter (and it must be focusable). Native buttons provide keyboard and focus behavior by default, which is why MDN recommends them.",
+      "explanation": "First: stop, go back, and do not do this. Good. Now, with role=\"button\" on a non-button element, click handlers fire only for pointer clicks — separate key event handlers must be added so the control activates on Space and Enter (and it must be focusable). Native buttons provide keyboard and focus behavior by default, which is why MDN recommends them.",
       "mdnUrl": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/button_role"
     }
   ]
