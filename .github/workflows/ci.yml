@@ -1,5 +1,5 @@
-# Release 1 CI (issue #6): format/lint/typecheck, unit, e2e, a11y (with the
-# aggregated axe report as an artifact), and VRT. VRT runs through
+# Release 1 CI (issue #6): format/lint/typecheck, unit, e2e, a11y, and VRT.
+# VRT runs through
 # scripts/vrt.sh — the same Docker machinery as local runs, with the
 # Playwright image version derived from the installed @playwright/test — so
 # the committed -linux baselines are compared on the identical renderer.
@@ -28,7 +28,9 @@ jobs:
           version: 11.15.0
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          # Single source of truth (.node-version) — vp env reads the same
+          # file locally, so CI and dev toolchains cannot drift.
+          node-version-file: .node-version
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Format, lint, typecheck
@@ -46,7 +48,9 @@ jobs:
           version: 11.15.0
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          # Single source of truth (.node-version) — vp env reads the same
+          # file locally, so CI and dev toolchains cannot drift.
+          node-version-file: .node-version
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Cache Playwright browsers
@@ -60,13 +64,10 @@ jobs:
         run: pnpm exec playwright test
       - name: Accessibility suite (axe)
         run: pnpm exec playwright test --config playwright.a11y.config.ts
-      - name: Upload aggregated axe report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: axe-report
-          path: full-report.json
-          if-no-files-found: ignore
+      # The aggregated axe report is not uploaded: failures reproduce locally
+      # with `pnpm run test:a11y`. Future idea (needs Ephemeral Pages work):
+      # publish full-report.json to ephemeral.schalkneethling.com and post
+      # the URL back to the PR.
       - name: Upload test results on failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -85,7 +86,9 @@ jobs:
           version: 11.15.0
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          # Single source of truth (.node-version) — vp env reads the same
+          # file locally, so CI and dev toolchains cannot drift.
+          node-version-file: .node-version
           cache: pnpm
       # Host install exists only so vrt.sh can derive the pinned image tag
       # and pnpm version; the container does its own Linux-native install.
