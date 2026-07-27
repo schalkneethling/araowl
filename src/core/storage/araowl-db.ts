@@ -6,7 +6,7 @@ export const DB_NAME = "araowl";
 // v2: adds the question-progress store (quiz size/mode selection work).
 export const DB_VERSION = 2;
 
-export interface AraowlDB extends DBSchema {
+export type AraowlDB = DBSchema & {
   attempts: {
     key: string;
     value: QuizAttempt;
@@ -16,7 +16,7 @@ export interface AraowlDB extends DBSchema {
     key: string;
     value: QuestionProgress;
   };
-}
+};
 
 /**
  * Single source of truth for the database schema. Every store class opens

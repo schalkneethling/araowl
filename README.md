@@ -128,9 +128,9 @@ alternative, not a requirement.)
 
 ```sh
 APP_ENV=production pnpm run build   # typecheck + build + source maps + _headers
-wrangler login                      # once
-wrangler pages project create araowl   # first deploy only
-wrangler pages deploy dist --project-name araowl
+pnpm exec wrangler login                      # once
+pnpm exec wrangler pages project create araowl   # first deploy only
+pnpm exec wrangler pages deploy dist --project-name araowl
 ```
 
 Security response headers ship via the build-emitted `dist/_headers`

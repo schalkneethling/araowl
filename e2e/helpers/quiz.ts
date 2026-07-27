@@ -120,60 +120,46 @@ export async function completeQuizAnyOrder(
   await expect(page.getByRole("heading", { name: "Your results" })).toBeVisible();
 }
 
-/** Count question-progress rows marked completed this cycle (0 when absent). */
-export function countCycleCompleted(page: Page): Promise<number> {
-  return page.evaluate(() => {
-    return new Promise<number>((resolve) => {
+/**
+ * Read every row of one araowl object store inside the page. Missing
+ * database, missing store, or any request error resolves to an empty array —
+ * counters built on this keep their zero-on-missing/error behavior.
+ */
+function readAllRows(page: Page, storeName: string): Promise<unknown[]> {
+  return page.evaluate((store) => {
+    return new Promise<unknown[]>((resolve) => {
       const open = indexedDB.open("araowl");
       open.addEventListener("success", () => {
         const db = open.result;
-        if (!db.objectStoreNames.contains("question-progress")) {
+        if (!db.objectStoreNames.contains(store)) {
           db.close();
-          resolve(0);
+          resolve([]);
           return;
         }
-        const request = db
-          .transaction("question-progress", "readonly")
-          .objectStore("question-progress")
-          .getAll();
+        const request = db.transaction(store, "readonly").objectStore(store).getAll();
         request.addEventListener("success", () => {
-          const rows = request.result as { completedInCycle?: boolean }[];
           db.close();
-          resolve(rows.filter((row) => row.completedInCycle).length);
+          resolve(request.result as unknown[]);
         });
         request.addEventListener("error", () => {
           db.close();
-          resolve(0);
+          resolve([]);
         });
       });
-      open.addEventListener("error", () => resolve(0));
+      open.addEventListener("error", () => resolve([]));
     });
-  });
+  }, storeName);
+}
+
+/** Count question-progress rows marked completed this cycle (0 when absent). */
+export async function countCycleCompleted(page: Page): Promise<number> {
+  const rows = (await readAllRows(page, "question-progress")) as {
+    completedInCycle?: boolean;
+  }[];
+  return rows.filter((row) => row.completedInCycle).length;
 }
 
 /** Count attempts currently persisted in IndexedDB (0 when the DB is absent). */
-export function countStoredAttempts(page: Page): Promise<number> {
-  return page.evaluate(() => {
-    return new Promise<number>((resolve) => {
-      const open = indexedDB.open("araowl");
-      open.addEventListener("success", () => {
-        const db = open.result;
-        if (!db.objectStoreNames.contains("attempts")) {
-          db.close();
-          resolve(0);
-          return;
-        }
-        const count = db.transaction("attempts", "readonly").objectStore("attempts").count();
-        count.addEventListener("success", () => {
-          db.close();
-          resolve(count.result);
-        });
-        count.addEventListener("error", () => {
-          db.close();
-          resolve(0);
-        });
-      });
-      open.addEventListener("error", () => resolve(0));
-    });
-  });
+export async function countStoredAttempts(page: Page): Promise<number> {
+  return (await readAllRows(page, "attempts")).length;
 }
