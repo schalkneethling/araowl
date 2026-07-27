@@ -89,7 +89,18 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["icons/*.png"],
+      // Precache the small icons only: favicon.svg (2.7 MB of embedded
+      // raster data) and the 512px manifest icon (541 KB) are deliberately
+      // excluded — neither is needed for offline quiz play.
+      includeAssets: [
+        "favicon.ico",
+        "favicon-96x96.png",
+        "apple-touch-icon.png",
+        "web-app-manifest-192x192.png",
+      ],
+      // Off because it would auto-precache every manifest icon, including
+      // the 541 KB 512px one the includeAssets list deliberately omits.
+      includeManifestIcons: false,
       manifest: {
         name: "AraOwl",
         short_name: "AraOwl",
@@ -100,18 +111,27 @@ export default defineConfig({
         display: "standalone",
         theme_color: "#005f73",
         background_color: "#ffffff",
+        // RealFaviconGenerator assets. RFG declares these purpose:maskable;
+        // the 512 is also listed as purpose:any so launchers that need an
+        // uncropped icon never fall back to cropping a maskable one.
         icons: [
           {
-            src: "/icons/icon-192.png",
+            src: "/web-app-manifest-192x192.png",
             sizes: "192x192",
             type: "image/png",
-            purpose: "any maskable",
+            purpose: "maskable",
           },
           {
-            src: "/icons/icon-512.png",
+            src: "/web-app-manifest-512x512.png",
             sizes: "512x512",
             type: "image/png",
-            purpose: "any maskable",
+            purpose: "maskable",
+          },
+          {
+            src: "/web-app-manifest-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any",
           },
         ],
       },

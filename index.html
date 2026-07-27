@@ -9,8 +9,32 @@
     />
     <title>AraOwl — Test your web knowledge</title>
     <meta name="theme-color" content="#005f73" />
-    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <!-- Favicons generated with RealFaviconGenerator. Deliberate deviation
+         from its suggested markup: no <link rel="manifest"> to its
+         site.webmanifest — this app's single manifest is the vite-plugin-pwa
+         one (/manifest.webmanifest, injected at build), which now carries the
+         RFG icons; a second manifest link would break installability. -->
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="AraOwl" />
+    <!-- Social cards. og:image must be an absolute URL. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="AraOwl" />
+    <meta property="og:title" content="AraOwl — Test your web knowledge" />
+    <meta
+      property="og:description"
+      content="Test and sharpen your web platform knowledge with AraOwl — quizzes built from MDN Web Docs that work offline, plus custom AI quizzes on the topics you choose."
+    />
+    <meta property="og:url" content="https://araowl.schalkneethling.com/" />
+    <meta
+      property="og:image"
+      content="https://araowl.schalkneethling.com/araowl-social-share.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <!-- Blocking classic script (not type="module", which defers) so the
          stored theme preference is applied before first paint. -->
     <script src="/theme-init.js"></script>
