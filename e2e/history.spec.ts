@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import {
   completeQuiz,
+  countCycleCompleted,
   countStoredAttempts,
   loadQuizQuestions,
   resetClientState,
@@ -24,6 +25,9 @@ test.beforeEach(async ({ page }) => {
   await resetClientState(page);
   await completeQuiz(page, roundOne, (question) => question.answerIndex);
   await expect.poll(() => countStoredAttempts(page)).toBe(1);
+  // Round two serves the next sequential slice only after round one's
+  // progress write commits (see quiz.spec.ts — CI-exposed race).
+  await expect.poll(() => countCycleCompleted(page)).toBe(TOTAL_QUESTIONS);
   await page.getByRole("button", { name: "Try again" }).press("Enter");
   await completeQuiz(page, roundTwo, (question) => (question.answerIndex + 1) % 4);
   await expect.poll(() => countStoredAttempts(page)).toBe(2);

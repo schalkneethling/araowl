@@ -68,25 +68,35 @@ test.describe("quiz configuration", () => {
   }) => {
     // Seed every question except the first round as already completed, so a
     // single played round exhausts the cycle without playing all five rounds.
+    // Wait for the app to have created the database and read progress (the
+    // rendered progress line proves both) before seeding — a versionless
+    // open racing the app's DB lifecycle can land on a store-less database,
+    // where transaction() throws synchronously and the evaluate hangs
+    // (caught on CI WebKit).
+    await expect(page.getByText(/^0 of 50 questions completed/)).toBeVisible();
     const laterIds = questions.slice(TOTAL_QUESTIONS).map((question) => question.id);
     await page.evaluate((ids) => {
       return new Promise<void>((resolve, reject) => {
         const open = indexedDB.open("araowl");
         open.addEventListener("success", () => {
-          const db = open.result;
-          const tx = db.transaction("question-progress", "readwrite");
-          for (const id of ids) {
-            tx.objectStore("question-progress").put({
-              questionId: id,
-              seenCount: 1,
-              completedInCycle: true,
+          try {
+            const db = open.result;
+            const tx = db.transaction("question-progress", "readwrite");
+            for (const id of ids) {
+              tx.objectStore("question-progress").put({
+                questionId: id,
+                seenCount: 1,
+                completedInCycle: true,
+              });
+            }
+            tx.addEventListener("complete", () => {
+              db.close();
+              resolve();
             });
+            tx.addEventListener("error", () => reject(tx.error ?? new Error("seed failed")));
+          } catch (error) {
+            reject(error instanceof Error ? error : new Error("seed transaction failed"));
           }
-          tx.addEventListener("complete", () => {
-            db.close();
-            resolve();
-          });
-          tx.addEventListener("error", () => reject(tx.error ?? new Error("seed failed")));
         });
         open.addEventListener("error", () => reject(open.error ?? new Error("open failed")));
       });

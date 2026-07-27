@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import {
   completeQuiz,
+  countCycleCompleted,
   countStoredAttempts,
   loadQuizQuestions,
   resetClientState,
@@ -126,6 +127,10 @@ test.describe("quiz island", () => {
     await completeQuiz(page, roundOne, (question) => question.answerIndex);
     await expect(page.getByText(`${TOTAL_QUESTIONS} / ${TOTAL_QUESTIONS}`)).toBeVisible();
     await expect.poll(() => countStoredAttempts(page)).toBe(1);
+    // Sequential selection reads the PROGRESS store; round two only serves
+    // the next slice once round one's recordSeen commit is observable
+    // (caught as a race on slower CI runners).
+    await expect.poll(() => countCycleCompleted(page)).toBe(TOTAL_QUESTIONS);
 
     await page.reload();
 
