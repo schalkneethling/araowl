@@ -89,9 +89,8 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
-      // Precache the small icons only: favicon.svg (2.7 MB of embedded
-      // raster data) and the 512px manifest icon (541 KB) are deliberately
-      // excluded — neither is needed for offline quiz play.
+      // Precache the small icons only: the 512px manifest icon (541 KB) is
+      // deliberately excluded — it isn't needed for offline quiz play.
       includeAssets: [
         "favicon.ico",
         "favicon-96x96.png",
