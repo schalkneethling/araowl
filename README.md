@@ -22,6 +22,13 @@ pnpm run test:vrt   # visual regression tests (requires Docker — see below)
 pnpm run quality    # format check, lint (oxlint + stylelint), typecheck
 ```
 
+CI (GitHub Actions, [`ci.yml`](.github/workflows/ci.yml)) runs the same
+matrix on every PR and push to `main` — check/lint/typecheck, unit, e2e,
+the axe suite (aggregated report uploaded as an artifact), and VRT through
+the identical Docker machinery as local runs (visual diffs uploaded on
+failure). CI needs no secrets: without `SENTRY_AUTH_TOKEN` the source-map
+upload plugin disables itself by design.
+
 ### Visual regression tests
 
 Screenshot baselines are font-rendering-sensitive, so the VRT suite runs

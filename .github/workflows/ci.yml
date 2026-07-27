@@ -1,0 +1,101 @@
+# Release 1 CI (issue #6): format/lint/typecheck, unit, e2e, a11y (with the
+# aggregated axe report as an artifact), and VRT. VRT runs through
+# scripts/vrt.sh — the same Docker machinery as local runs, with the
+# Playwright image version derived from the installed @playwright/test — so
+# the committed -linux baselines are compared on the identical renderer.
+#
+# No secrets: builds run without SENTRY_AUTH_TOKEN, so the source-map upload
+# plugin disables itself by design (see vite.config.ts).
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Check + unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.15.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Format, lint, typecheck
+        run: pnpm exec vp check
+      - name: Unit tests (Vitest)
+        run: pnpm exec vp test
+
+  e2e:
+    name: End-to-end + accessibility
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.15.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium webkit
+      - name: End-to-end tests
+        run: pnpm exec playwright test
+      - name: Accessibility suite (axe)
+        run: pnpm exec playwright test --config playwright.a11y.config.ts
+      - name: Upload aggregated axe report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: axe-report
+          path: full-report.json
+          if-no-files-found: ignore
+      - name: Upload test results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-test-results
+          path: test-results/
+          if-no-files-found: ignore
+
+  vrt:
+    name: Visual regression (Docker)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.15.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      # Host install exists only so vrt.sh can derive the pinned image tag
+      # and pnpm version; the container does its own Linux-native install.
+      - run: pnpm install --frozen-lockfile
+      - name: Visual regression tests
+        run: ./scripts/vrt.sh
+      - name: Upload visual diffs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vrt-diffs
+          path: test-results/
+          if-no-files-found: ignore
