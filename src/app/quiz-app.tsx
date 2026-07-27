@@ -77,7 +77,13 @@ export function QuizApp() {
     void (async () => {
       const index = await quizSource.getQuiz();
       setPool(index.questions);
-      let progress = await progressStore.getProgress();
+      // Progress is an enhancement, never a gate: if the store is broken
+      // (e.g. a damaged IndexedDB), the quiz still starts — selection just
+      // behaves as a fresh profile.
+      let progress = await progressStore.getProgress().catch((error: unknown) => {
+        console.error("Failed to read question progress", error);
+        return [];
+      });
       // An exhausted sequential set starts a fresh cycle at the next quiz.
       if (settings.mode === "sequential" && isCycleExhausted(index.questions, progress)) {
         await progressStore.resetCycle();
