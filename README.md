@@ -119,26 +119,35 @@ CSP violations in built output.
 
 Each release is deployed manually with wrangler. Production builds must run
 with `APP_ENV=production` so varlock loads [`.env.production`](.env.production)
-and resolves the 1Password references (desktop app locally; an `OP_TOKEN`
-service account in CI later) — this is also what enables Sentry source-map
-upload.
+and resolves the 1Password references via the desktop app — this is also what
+enables Sentry source-map upload. CI never needs 1Password: the only secret
+any build uses is `SENTRY_AUTH_TOKEN`, and a real environment variable takes
+precedence over the `op://` reference, so CI sets it directly as a CI secret.
+(The `OP_TOKEN` service-account hook in `.env.schema` exists as an optional
+alternative, not a requirement.)
 
 ```sh
 APP_ENV=production pnpm run build   # typecheck + build + source maps + _headers
-wrangler login                      # once
-wrangler pages project create araowl   # first deploy only
-wrangler pages deploy dist --project-name araowl
+pnpm exec wrangler login                      # once
+pnpm exec wrangler pages project create araowl   # first deploy only
+pnpm exec wrangler pages deploy dist --project-name araowl
 ```
 
 Security response headers ship via the build-emitted `dist/_headers`
 (Cloudflare Pages reads it): the CSP as a real header including
 `frame-ancestors 'none'`, `X-Frame-Options`, `X-Content-Type-Options`,
-`Referrer-Policy`, and a minimal `Permissions-Policy`. The `<meta>` CSP
-remains as fallback for hosts that ignore `_headers`.
+`Referrer-Policy`, and a minimal `Permissions-Policy`. On hosts that ignore
+`_headers` (e.g. `vp preview` and the e2e webServer) the `<meta>` CSP still
+applies, but it is a **partial** fallback only: header-only protections —
+`frame-ancestors`, `X-Frame-Options`, `Referrer-Policy`,
+`Permissions-Policy`, `nosniff` — cannot be expressed in a `<meta>` tag, so
+full protection exists only where the headers are served.
 
 **Custom domain:** in the Cloudflare Pages project add
-`araowl.schalkneethling.com`, then CNAME it to the project's `*.pages.dev`
-host in Netlify DNS (DNS stays on Netlify).
+`araowl.schalkneethling.com`, then CNAME it in Netlify DNS to the project's
+assigned `pages.dev` hostname — copy the exact value from the Pages project
+overview in the Cloudflare dashboard (for this project name it is
+`araowl.pages.dev`). DNS stays on Netlify.
 
 **Recommended:** add a Cloudflare WAF rate-limiting rule for the domain —
 the site is static today, but the rule is in place before Phase 4 adds AI

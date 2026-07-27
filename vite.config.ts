@@ -69,6 +69,9 @@ const cspPlugin: PluginOption = {
         "  X-Frame-Options: DENY",
         "  X-Content-Type-Options: nosniff",
         "  Referrer-Policy: strict-origin-when-cross-origin",
+        // Baseline limited-availability (see MDN): browsers without support
+        // ignore the header. Pure progressive hardening — nothing in the app
+        // requests these capabilities, so no functionality depends on it.
         "  Permissions-Policy: camera=(), microphone=(), geolocation=()",
         "",
       ].join("\n"),

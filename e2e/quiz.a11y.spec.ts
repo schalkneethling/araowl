@@ -64,7 +64,9 @@ async function seedAttempt(page: Page): Promise<void> {
     };
     return new Promise<void>((resolve, reject) => {
       // Mirrors IdbScoreStore's schema: keyPath "id", index "finishedAt".
-      const open = indexedDB.open("araowl", 1);
+      // Versionless: opens whatever schema version the app has created —
+      // pinning a number here breaks every time the app migrates the DB.
+      const open = indexedDB.open("araowl");
       open.addEventListener("upgradeneeded", () => {
         const store = open.result.createObjectStore("attempts", { keyPath: "id" });
         store.createIndex("finishedAt", "finishedAt");

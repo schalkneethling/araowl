@@ -220,6 +220,29 @@
   color: var(--color-text-secondary);
 }
 
+.quiz-config {
+  border-block: var(--border-primary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-16);
+  padding-block: var(--size-16);
+}
+
+.quiz-config__size-labels {
+  display: flex;
+  justify-content: space-between;
+}
+
+.quiz-config__mode-description {
+  color: var(--color-text-secondary);
+  display: block;
+}
+
+.quiz-config__progress {
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
 .quiz-history__actions {
   display: flex;
   gap: var(--size-8);

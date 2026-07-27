@@ -46,9 +46,9 @@ export async function resetClientState(page: Page): Promise<void> {
 }
 
 /** Start the quiz from the start view and wait for question 1. */
-export async function startQuiz(page: Page): Promise<void> {
+export async function startQuiz(page: Page, total: number = TOTAL_QUESTIONS): Promise<void> {
   await page.getByRole("button", { name: "Start quiz" }).press("Enter");
-  await expect(page.getByText(`Question 1 of ${TOTAL_QUESTIONS}`)).toBeVisible();
+  await expect(page.getByText(`Question 1 of ${total}`)).toBeVisible();
 }
 
 /**
@@ -83,29 +83,83 @@ export async function completeQuiz(
   await expect(page.getByRole("heading", { name: "Your results" })).toBeVisible();
 }
 
-/** Count attempts currently persisted in IndexedDB (0 when the DB is absent). */
-export function countStoredAttempts(page: Page): Promise<number> {
-  return page.evaluate(() => {
-    return new Promise<number>((resolve) => {
+/**
+ * Play a full quiz without assuming question order (randomized mode): each
+ * round, the current question is identified by its heading text and answered
+ * with pickIndex(question). `total` is how many questions the round has.
+ */
+export async function completeQuizAnyOrder(
+  page: Page,
+  questions: QuizQuestionData[],
+  total: number,
+  pickIndex: (question: QuizQuestionData) => number,
+): Promise<void> {
+  await startQuiz(page, total);
+  for (let number = 1; number <= total; number++) {
+    await expect(page.getByText(`Question ${number} of ${total}`)).toBeVisible();
+    const headingText = await page
+      .locator("#quiz-root")
+      .getByRole("heading", { level: 2 })
+      .first()
+      .innerText();
+    const question = questions.find((candidate) => candidate.question === headingText.trim());
+    if (!question) {
+      throw new Error(`No manifest question matches heading: ${headingText}`);
+    }
+
+    const chosen = pickIndex(question);
+    await page
+      .locator("#quiz-root")
+      .getByRole("radio", { name: question.options[chosen] ?? "" })
+      .press("Space");
+    await page.getByRole("button", { name: "Check answer" }).press("Enter");
+    await page
+      .getByRole("button", { name: number === total ? "See results" : "Next question" })
+      .press("Enter");
+  }
+  await expect(page.getByRole("heading", { name: "Your results" })).toBeVisible();
+}
+
+/**
+ * Read every row of one araowl object store inside the page. Missing
+ * database, missing store, or any request error resolves to an empty array —
+ * counters built on this keep their zero-on-missing/error behavior.
+ */
+function readAllRows(page: Page, storeName: string): Promise<unknown[]> {
+  return page.evaluate((store) => {
+    return new Promise<unknown[]>((resolve) => {
       const open = indexedDB.open("araowl");
       open.addEventListener("success", () => {
         const db = open.result;
-        if (!db.objectStoreNames.contains("attempts")) {
+        if (!db.objectStoreNames.contains(store)) {
           db.close();
-          resolve(0);
+          resolve([]);
           return;
         }
-        const count = db.transaction("attempts", "readonly").objectStore("attempts").count();
-        count.addEventListener("success", () => {
+        const request = db.transaction(store, "readonly").objectStore(store).getAll();
+        request.addEventListener("success", () => {
           db.close();
-          resolve(count.result);
+          resolve(request.result as unknown[]);
         });
-        count.addEventListener("error", () => {
+        request.addEventListener("error", () => {
           db.close();
-          resolve(0);
+          resolve([]);
         });
       });
-      open.addEventListener("error", () => resolve(0));
+      open.addEventListener("error", () => resolve([]));
     });
-  });
+  }, storeName);
+}
+
+/** Count question-progress rows marked completed this cycle (0 when absent). */
+export async function countCycleCompleted(page: Page): Promise<number> {
+  const rows = (await readAllRows(page, "question-progress")) as {
+    completedInCycle?: boolean;
+  }[];
+  return rows.filter((row) => row.completedInCycle).length;
+}
+
+/** Count attempts currently persisted in IndexedDB (0 when the DB is absent). */
+export async function countStoredAttempts(page: Page): Promise<number> {
+  return (await readAllRows(page, "attempts")).length;
 }
