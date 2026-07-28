@@ -89,6 +89,11 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
+      // Registration lives in main.tsx (virtual:pwa-register) so failures
+      // are handled: the auto-injected script has no catch, and transient
+      // network failures during registration were reaching Sentry as
+      // unhandled rejections at crash severity.
+      injectRegister: false,
       // Precache the small icons only: the 512px manifest icon (541 KB) is
       // deliberately excluded — it isn't needed for offline quiz play.
       includeAssets: [
@@ -142,6 +147,11 @@ export default defineConfig({
         // starting a quiz. It's a build artifact, so it updates atomically
         // with each deploy via the autoUpdate service worker.
         globPatterns: ["**/*.{js,wasm,css,html}", "data/quiz-index.json"],
+        // Pinned explicitly: with injectRegister off, the plugin stops
+        // inferring these from registerType, and losing clientsClaim means
+        // the first visit is never controlled (caught by the offline e2e).
+        clientsClaim: true,
+        skipWaiting: true,
         // The SW is generated after the Sentry plugin's map cleanup and the
         // browser SDK can't use worker maps anyway — without this, sw.js.map
         // would be the one map file that still reached production.
