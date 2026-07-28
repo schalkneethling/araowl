@@ -124,21 +124,37 @@ attributes; scripts stay locked down. The dev server is exempt (it injects
 inline styles for HMR); an e2e test asserts a full quiz run produces zero
 CSP violations in built output.
 
-## Deployment (Cloudflare Pages)
+## Deployment (Cloudflare Pages, Git integration)
 
-Each release is deployed manually with wrangler. Production builds must run
-with `APP_ENV=production` so varlock loads [`.env.production`](.env.production)
-and resolves the 1Password references via the desktop app — this is also what
-enables Sentry source-map upload. CI never needs 1Password: the only secret
-any build uses is `SENTRY_AUTH_TOKEN`, and a real environment variable takes
-precedence over the `op://` reference, so CI sets it directly as a CI secret.
-(The `OP_TOKEN` service-account hook in `.env.schema` exists as an optional
-alternative, not a requirement.)
+Deploys are driven by the Cloudflare Pages **Git integration**: every push to
+`main` builds and deploys production, and every PR gets its own preview
+deployment URL. No 1Password anywhere in CI — the only secret a build uses is
+`SENTRY_AUTH_TOKEN`, and a real environment variable takes precedence over
+the `op://` reference in [`.env.production`](.env.production), so it is set
+directly as an encrypted Pages variable.
+
+Pages project settings (Settings → Builds & deployments):
+
+- **Build command:** `pnpm run build` — not `npm run build`; the
+  `devEngines.packageManager` pin makes npm refuse with `EBADDEVENGINES` by
+  design. pnpm and Node are auto-detected from `devEngines` and
+  [`.node-version`](.node-version).
+- **Build output directory:** `dist`
+- **Environment variables — Production:** `APP_ENV=production` and
+  `SENTRY_AUTH_TOKEN` (encrypted). Without them the build still succeeds,
+  but ships without source maps and tags Sentry events as `dev`.
+- **Environment variables — Preview:** `APP_ENV=preview`, no Sentry token —
+  previews don't upload source maps.
+
+### Manual deploy (fallback)
+
+For a deploy without the Git integration (Pages CI incident, local hotfix),
+build with `APP_ENV=production` so varlock resolves the 1Password references
+via the desktop app — this also enables the Sentry source-map upload:
 
 ```sh
 APP_ENV=production pnpm run build   # typecheck + build + source maps + _headers
 pnpm exec wrangler login                      # once
-pnpm exec wrangler pages project create araowl   # first deploy only
 pnpm exec wrangler pages deploy dist --project-name araowl
 ```
 
